@@ -32,15 +32,10 @@ def login():
         if not User.username_taken(username):
             login_user(User(username=username, password=password))
             return redirect(request.args.get("next") or url_for("home"))
-        elif User.check_password(request.form.get('username'), request.form.get('password')):
-            login_user(User(User.id_from_name(username)))
+        elif User.check_password(User.id_from_name(username), request.form.get('password')):
+            login_user(User(userid=User.id_from_name(username)))
             return redirect(request.args.get("next") or url_for("home"))
     return render_template('login.html', form=form)
-
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    return '<h1>SIGN UP</h1>'
 
 
 @app.route('/')

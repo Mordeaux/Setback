@@ -43,6 +43,8 @@ class User(UserMixin):
             self['id'] = User.new_user()
             self['username'] = username
             self['password'] = hashulate(password)
+            User.add_to_table(username, self['id'])
+            self.save()
         else:
             with open(User.UserFile.format(userid), 'r') as f:
                 self.user = json.loads(f.read())
@@ -78,6 +80,10 @@ class User(UserMixin):
 
     def __getitem__(self, key):
         return self.user[key]
+
+    def save(self):
+        with open(User.UserFile.format(self['id']), 'w') as f:
+            f.write(json.dumps(self.user))
 
     @staticmethod
     def add_to_table(username, user_id):

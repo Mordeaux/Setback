@@ -46,3 +46,4 @@ env/
 application/games/
 application/users/
 application/static/cards/
+application/usertable.json
