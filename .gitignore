@@ -43,3 +43,6 @@ Thumbs.db
 *.swo
 *.swn
 env/
+application/games/
+application/users/
+application/static/cards/

@@ -1,0 +1,18 @@
+﻿{% extends 'template.html' %}
+{% block title %}Login - {% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %}
+{% from "_formhelpers.html" import render_field %}
+<form method="post" action="/login">
+  <dl>
+    {{ render_field(form.username) }}
+    {{ render_field(form.password) }}
+  </dl>
+  <p><input type="submit" value="Login">
+<p>
+<a href="{{ url_for('signup') }}">Create an account</a>
+</p>
+</form>
+{% endblock %}
