@@ -5,7 +5,7 @@ from random import shuffle
 from flask import Flask, render_template, request, redirect, url_for
 from flask.ext.login import LoginManager, login_required, login_user, current_user
 
-from Hand import Hand
+from Game import Game
 from User import User
 
 from config import DIRECTORY, GAMES_DIR, USER_DIR, SECRET_KEY
@@ -44,12 +44,10 @@ def home():
     return render_template('gameboard.html')
 
 
-@app.route('/deal')
+@app.route('/newgame')
 @login_required
-def deal():
-    hand = Hand()
-    hand.deal()
-
+def new_game():
+    pass
 
 if __name__ == "__main__":
     app.run(debug=True)

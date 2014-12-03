@@ -85,6 +85,12 @@ class User(UserMixin):
         with open(User.UserFile.format(self['id']), 'w') as f:
             f.write(json.dumps(self.user))
 
+    def invite(self, game_id):
+        self['invites'] += game_id
+
+    def current_game(self):
+        return self['current_game_id']
+
     @staticmethod
     def add_to_table(username, user_id):
         with open(User.UserTable, 'r') as f:
@@ -104,3 +110,9 @@ class User(UserMixin):
         with open(User.UserTable, 'r') as f:
             user_id = json.loads(f.read())[username]
         return user_id
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self.save()
