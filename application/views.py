@@ -41,7 +41,7 @@ def login():
 @app.route('/')
 @login_required
 def home():
-    return render_template('gameboard.html')
+    return render_template('dashboard.html', user=current_user)
 
 
 @app.route('/newgame')
