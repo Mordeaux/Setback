@@ -1,45 +1,47 @@
 {% extends "template.html" %}
 
 {% block head %}
-  <script src="{{ url_for('static', filename='setback.js') }}"></script>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gameboard.css') }}">
 {% endblock %}
 
 {% block body %}
-<div id="display">
-</div>
+<div id="topbar"></div>
+<div id="display"></div>
 
 <script type="text/template" id="topbar-template">
-<div id="topbar">
-  {{ user.username }} Games Logout
-</div>
+  <div id="username">{{ user.username }}</div> <div id="games-list">Games</div> <div id="newgame">New Game</div> <div id="rules">Rules</div>
 </script>
 
 
 
 <script type="text/template" id="dash-template">
 <div id="current-games">
+THESE ARE YOURE GAMES
 </div>
 
 </script>
 
 
 
-<script type="text/template" id="game-template">
+<script type="text/template" id="sidebar-template">
 <div id="players">
   <ul>Mike</ul>
   <ul>Kaitlin</ul>
   <ul>Josh</ul>
   <ul>Natalia</ul>
 </div>
+</script>
 
+<script type="text/template" id="gameboard-template">
 <div id="gameboard">
 {% for i in range(4) %}
   <div id="player{{i}}">
   </div>
 {% endfor %}
 </div>
+</script>
 
+<script type="text/template" id="hand-template">
 <div id="hand">
 {% for i in range(6) %}
   <div id="card{{i}}" class="card">
@@ -47,4 +49,9 @@
 {% endfor %}
 </div>
 </script>
+
+
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='setback.js') }}"></script>
+
 {% endblock %}

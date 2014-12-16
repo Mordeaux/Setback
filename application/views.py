@@ -32,7 +32,8 @@ def login():
         if not User.username_taken(username):
             login_user(User(username=username, password=password))
             return redirect(request.args.get("next") or url_for("home"))
-        elif User.check_password(User.id_from_name(username), request.form.get('password')):
+        elif User.check_password(User.id_from_name(username), 
+                                 request.form.get('password')):
             login_user(User(userid=User.id_from_name(username)))
             return redirect(request.args.get("next") or url_for("home"))
     return render_template('login.html', form=form)
@@ -48,6 +49,7 @@ def home():
 @login_required
 def new_game():
     pass
+
 
 if __name__ == "__main__":
     app.run(debug=True)
