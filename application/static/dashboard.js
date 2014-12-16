@@ -39,5 +39,7 @@ var DashView = Backbone.View.extend({
 
   var user = new User({games:['first game', 'second game']});
   var topbarView = new TopbarView({model:user});
+  var dashView = new DashView({model:user});
   topbarView.render();
+  dashView.render();
 });

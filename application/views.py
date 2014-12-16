@@ -50,6 +50,18 @@ def home():
 def new_game():
     pass
 
+@app.route('/game')
+@login_required
+def games():
+    return 'something'
+
+
+@app.route('/game/<int:idno>', methods=['PUT', 'POST', 'GET'])
+@login_required
+def game(idno):
+    print idno
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

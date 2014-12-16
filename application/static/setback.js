@@ -2,24 +2,38 @@ $(function(){
 /////////////////////////////////
 ////MODELS
 /////////////////////////////////
-var Hand = Backbone.Model.extend({
+var Game = Backbone.Model.extend({
   defaults: {
     cards: []
   }
 });
 /////////////////////////////////
+////COLLECTIONS
+/////////////////////////////////
+var GameCollection = Backbone.Collection.extend({
+  model: Game,
+  url: '/game',
+
+  parse: function(resp) {
+    console.log('eeee');
+    console.log(resp);
+    return resp;
+  }
+});
+/////////////////////////////////
 ////VIEWS
 /////////////////////////////////
-var HandView = Backbone.View.extend({
+var GameView = Backbone.View.extend({
   el: '#display',
   handTpl: _.template( $('#hand-template').html()),
+  sidebarTpl: _.template( $('#sidebar-template').html()),
+  gameboardTpl: _.template( $('#gameboard-template').html()),
 
   events: {
     
   },
  
   initialize: function() {
-    this.$el = $('#display');
   },
 
   render: function() {
@@ -35,6 +49,9 @@ var HandView = Backbone.View.extend({
 
 });
 
+    var games = new GameCollection();
+    console.log(games);
+    games.fetch();
 //  var myHand = new Hand({cards:['10c', '2d', '12s', '14s', '9h', '14h']});
 //  var gameView = new HandView({model: myHand});
 //  gameView.render();
