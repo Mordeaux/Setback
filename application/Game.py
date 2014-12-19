@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from hashlib import sha1
 from random import shuffle, choice
@@ -44,6 +45,16 @@ class Game(object):
             f.write(json.dumps(game))
         return game_id
 
+    def model(self, user_id):
+        player = 'player'+str(self['players'].index(user_id))
+        response = {
+            'cards': self[player],
+            'id': self['id'],
+            'play_to': self['play_to'],
+            'turn': self['turn'],
+            'players': self['players']
+        }
+        return json.dumps(response)
 
     def __setitem__(self, key, value):
         self.game[key] = value

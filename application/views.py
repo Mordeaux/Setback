@@ -3,13 +3,14 @@ import json
 
 from random import shuffle
 from flask import Flask, render_template, request, redirect, url_for
-from flask.ext.login import LoginManager, login_required, login_user, current_user
+from flask.ext.login import LoginManager, login_required, login_user, current_user, logout_user
 
 from Game import Game
 from User import User
 
-from config import DIRECTORY, GAMES_DIR, USER_DIR, SECRET_KEY
+from config import DIRECTORY, GAMES_DIR, USER_DIR, SECRET_KEY, db_session
 from forms import LoginForm
+
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -18,9 +19,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -50,10 +58,11 @@ def home():
 def new_game():
     pass
 
+
 @app.route('/game')
 @login_required
 def games():
-    return 'something'
+    return current_user.current_games()
 
 
 @app.route('/game/<int:idno>', methods=['PUT', 'POST', 'GET'])
@@ -62,6 +71,11 @@ def game(idno):
     print idno
 
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(debug=True)

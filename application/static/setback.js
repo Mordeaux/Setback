@@ -4,7 +4,11 @@ $(function(){
 /////////////////////////////////
 var Game = Backbone.Model.extend({
   defaults: {
-    cards: []
+    cards: [],
+    id: '',
+    play_to: 21,
+    turn: '',
+    players: []
   }
 });
 /////////////////////////////////
@@ -15,8 +19,6 @@ var GameCollection = Backbone.Collection.extend({
   url: '/game',
 
   parse: function(resp) {
-    console.log('eeee');
-    console.log(resp);
     return resp;
   }
 });
@@ -50,7 +52,6 @@ var GameView = Backbone.View.extend({
 });
 
     var games = new GameCollection();
-    console.log(games);
     games.fetch();
 //  var myHand = new Hand({cards:['10c', '2d', '12s', '14s', '9h', '14h']});
 //  var gameView = new HandView({model: myHand});

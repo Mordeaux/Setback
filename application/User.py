@@ -4,12 +4,17 @@ import time
 
 from hashlib import sha1
 from flask.ext.login import UserMixin
+from sqlalchemy import Column, Integer, String
 
-from config import DIRECTORY, USER_DIR, hashulate
+from config import DIRECTORY, USER_DIR, hashulate, Base
 
-class User(UserMixin):
+class User(UserMixin, Base):
     UserFile = os.path.join(USER_DIR, '{}')
     UserTable = os.path.join(DIRECTORY, 'usertable.json')
+
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50), unique=True)
  
     @staticmethod
     def get(userid):
@@ -21,11 +26,13 @@ class User(UserMixin):
     def new_user():
         with open(os.path.join(DIRECTORY, 'newuser.json'), 'r') as f:
             user = json.loads(f.read())
+        print user
         # change this when using SQL
         user_id = sha1(str(time.time())+DIRECTORY).hexdigest()
         user['id'] = user_id
         with open(User.UserFile.format(user_id), 'w') as f:
             f.write(json.dumps(user))
+        print json.dumps(user)
         return user_id
 
     @staticmethod
@@ -39,6 +46,7 @@ class User(UserMixin):
     def __init__(self, userid=None, username=None, password=None):
         if not userid:
             #fix this when implementing SQL
+            self.username = username
             self.user = {}
             self['id'] = User.new_user()
             self['username'] = username
@@ -81,6 +89,9 @@ class User(UserMixin):
     def __getitem__(self, key):
         return self.user[key]
 
+    def __repr__(self):
+        return '<User %r>' % (self.username)
+
     def save(self):
         with open(User.UserFile.format(self['id']), 'w') as f:
             f.write(json.dumps(self.user))
@@ -110,6 +121,14 @@ class User(UserMixin):
         with open(User.UserTable, 'r') as f:
             user_id = json.loads(f.read())[username]
         return user_id
+
+    def current_games(self):
+        response = {}
+        for game in self['games']:
+            game = Game(game_id=game)
+            response[game['id']] = game.model(self['id'])
+        print response
+        return json.dumps(response)
 
     def __enter__(self):
         return self
