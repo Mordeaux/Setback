@@ -9,16 +9,13 @@ from sqlalchemy import Column, Integer, String
 from config import DIRECTORY, USER_DIR, hashulate, Base
 
 class User(UserMixin, Base):
-    UserFile = os.path.join(USER_DIR, '{}')
-    UserTable = os.path.join(DIRECTORY, 'usertable.json')
-
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True)
  
     @staticmethod
     def get(userid):
-        if not os.path.exists(User.UserFile.format(userid)):
+        if not User.query.filter(id=userid):
             return None
         return User(userid=userid)
 
@@ -30,9 +27,6 @@ class User(UserMixin, Base):
         # change this when using SQL
         user_id = sha1(str(time.time())+DIRECTORY).hexdigest()
         user['id'] = user_id
-        with open(User.UserFile.format(user_id), 'w') as f:
-            f.write(json.dumps(user))
-        print json.dumps(user)
         return user_id
 
     @staticmethod
