@@ -4,16 +4,30 @@ import time
 from hashlib import sha1
 from random import shuffle, choice
 
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+
 from User import User
-from config import GAMES_DIR
+from config import GAMES_DIR, Base
 
-class Game(object):
-
+class Game(Base):
+    __tablename__ = 'games'
+    id = Column(Integer, primary_key=True)
+    finished = Column(Boolean)
+    deck = Column(String(332))
+    team1_score = Column(Integer)
+    team2_score = Column(Integer)
+    player0_id = Column(Integer, ForeignKey('users.id'))
+    player1_id = Column(Integer, ForeignKey('users.id'))
+    player2_id = Column(Integer, ForeignKey('users.id'))
+    player3_id = Column(Integer, ForeignKey('users.id'))
+    
+ 
     def __init__(self, game_id=None):
         if not game_id:
             game_id = Game.new_game()
         with open(os.path.join(GAMES_DIR, game_id), 'r') as f:
             self.game = json.loads(f.read())
+        self.id = game_id
 
     def save(self):
         with open(os.path.join(GAME_DIR, self['id']), 'w') as f:
