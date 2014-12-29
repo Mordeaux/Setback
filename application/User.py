@@ -5,30 +5,34 @@ import time
 from flask.ext.login import UserMixin
 from sqlalchemy import Column, Integer, String, Table, ForeignKey
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.associationproxy import association_proxy
 
-from config import DIRECTORY, USER_DIR, hashulate, Base
+from config import DIRECTORY, hashulate, Base
 
 
-class Friends(Base):
-    __tablename__ = 'friends'
-    left_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    right_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    friend = relationship("User", backref="parent_assocs")
-
-class Association(Base):
-    __tablename__ = 'association'
-    left_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    right_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
+class GamePlayers(Base):
+    __tablename__ = 'players'
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    game_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
     player_number  = Column(Integer)
-    game = relationship("Game", backref="parent_assocs")
+    player = relationship('User', backref=backref('games_list', cascade='all, delete-orphan'))
+    game = relationship('Game', backref=backref('players_list', cascade='all, delete-orphan'))
+
+    def __init__(self, game=None, user=None, player_number=None):
+        self.game = game
+        self.player = user
+        self.player_number = player_number
+
+    def __repr__(self):
+        return '<Game %r, User %r, Number %r>' % (self.game_id, self.user_id, self.player_number)
 
 class User(UserMixin, Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(50), nullable=False)
     password = Column(String(40), nullable=False)
-    email = Column(String(50), nullable=False)
-    games = relationship('Association', backref='users')
+    current_game = Column(Integer, ForeignKey('games.id'))
+    games = association_proxy('games_list', 'game')
  
     @staticmethod
     def get(userid):
@@ -40,6 +44,9 @@ class User(UserMixin, Base):
         if user.password == hashulate(password):
             return True
         return False
+
+    def change_name(self, newname):
+        self.username = newname
  
     def is_authenticated(self):
         """Returns True if the user is authenticated, i.e. they have provided 

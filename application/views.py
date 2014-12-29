@@ -6,9 +6,9 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask.ext.login import LoginManager, login_required, login_user, current_user, logout_user
 
 from Game import Game
-from User import User
+from User import User, GamePlayers
 
-from config import DIRECTORY, GAMES_DIR, USER_DIR, SECRET_KEY, db_session
+from config import DIRECTORY, SECRET_KEY, db_session, hashulate, init_db
 from forms import LoginForm
 
 
@@ -77,5 +77,66 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+@app.before_first_request
+def setup():
+    if not os.path.isfile(os.path.join(DIRECTORY, 'test.db')):
+        init_db()
+    mike = User(username='mordo', password=hashulate('password'))
+    kait = User(username='kaitlin', password=hashulate('password'))
+    josh = User(username='josh', password=hashulate('password'))
+    nat = User(username='natalia', password=hashulate('password'))
+    game = Game()
+    game2 = Game()
+    GamePlayers(game, mike, 0)
+    GamePlayers(game, josh, 1)
+    GamePlayers(game, kait, 2)
+    GamePlayers(game, nat, 3)
+    GamePlayers(game2, mike, 3)
+    GamePlayers(game2, josh, 2)
+    GamePlayers(game2, kait, 1)
+    GamePlayers(game2, nat, 0)
+#    mike.games.append(game)
+#    kait.games.append(game)
+#    josh.games.append(game)
+#    nat.games.append(game)
+    db_session.add(mike)
+    db_session.add(kait)
+    db_session.add(josh)
+    db_session.add(nat)
+    db_session.add(game)
+#    db_session.add(game2)
+#    db_session.add(games1)
+#    db_session.add(games2)
+#    db_session.add(games3)
+#    db_session.add(games0)
+#    db_session.add(games0)
+#    db_session.add(games1)
+#    db_session.add(games2)
+#    db_session.add(games3)
+    db_session.commit()
+    print 'break-----------------------'
+    print game == game2
+    print 'break-----------------------'
+    print User.query.all()
+    print 'break-----------------------'
+    print Game.query.all()
+    print 'break-----------------------'
+    print User.get(1)
+    print 'break-----------------------'
+    print User.get(1).games
+    print 'break-----------------------'
+    print mike.games
+    print 'break-----------------------'
+    print kait.games_list[0].player_number
+    print 'break-----------------------'
+    print mike.username
+    mike.change_name('bjork')
+    print 'break-----------------------'
+    print mike.username
+    print 'break-----------------------'
+    print mike.games[0].players
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+    print User.get(1).username

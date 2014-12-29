@@ -4,15 +4,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 DIRECTORY = os.path.abspath(os.path.dirname(__file__))
-GAMES_DIR = os.path.join(DIRECTORY, 'games')
-USER_DIR = os.path.join(DIRECTORY, 'users')
-for directory in [GAMES_DIR, USER_DIR]:
-    if not os.path.exists(directory):
-        os.path.mkdir(directory)
-if not os.path.isfile(os.path.join(DIRECTORY, 'usertable.json')):
-    with open(os.path.join(DIRECTORY, 'usertable.json'), 'w') as f:
-        f.write('{}')
-
 
 engine = create_engine('sqlite:///test.db', convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -28,8 +19,7 @@ def init_db():
     import User, Game
     Base.metadata.create_all(bind=engine)
 
-if not os.path.isfile(os.path.join(DIRECTORY, 'test.db')):
-    init_db()
+
 
 
 # The secret key is needed for Flask to 
