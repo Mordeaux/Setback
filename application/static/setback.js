@@ -8,7 +8,9 @@ var Game = Backbone.Model.extend({
     id: '',
     play_to: 21,
     turn: '',
-    players: []
+    players: [],
+    team1_score: 0,
+    team2_score: 0
   }
 });
 /////////////////////////////////

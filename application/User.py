@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import DIRECTORY, hashulate, Base
+from GameView import GameView
 
 
 class GamePlayers(Base):
@@ -16,7 +17,7 @@ class GamePlayers(Base):
     game_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
     player_number  = Column(Integer)
     player = relationship('User', backref=backref('games_list', cascade='all, delete-orphan'))
-    game = relationship('Game', backref=backref('players_list', cascade='all, delete-orphan'))
+    game = relationship('Game', backref=backref('players_list', order_by='GamePlayers.player_number', cascade='all, delete-orphan'))
 
     def __init__(self, game=None, user=None, player_number=None):
         self.game = game
@@ -31,12 +32,11 @@ class User(UserMixin, Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(50), nullable=False)
     password = Column(String(40), nullable=False)
-    current_game = Column(Integer, ForeignKey('games.id'))
     games = association_proxy('games_list', 'game')
  
     @staticmethod
     def get(userid):
-        return User.query.filter(User.id == userid).first()
+        return User.query.filter(User.id == userid).one()
 
     @staticmethod
     def check_password(userid, password):
@@ -47,6 +47,18 @@ class User(UserMixin, Base):
 
     def change_name(self, newname):
         self.username = newname
+
+    def player_number(self, game):
+        """Takes a Game object and returns the player's position (ie. 0-3)"""
+        filter1 = GamePlayers.user_id == self.id
+        filter2 = GamePlayers.game_id == game.id
+        return GamePlayers.query.filter(filter1, filter2).one().player_number
+
+    def join_game(self, game, player_number):
+        GamePlayers(game, self, player_number)
+
+    def view(self, game):
+        return GameView(self, game)
  
     def is_authenticated(self):
         """Returns True if the user is authenticated, i.e. they have provided 

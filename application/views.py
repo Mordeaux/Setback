@@ -3,10 +3,14 @@ import json
 
 from random import shuffle
 from flask import Flask, render_template, request, redirect, url_for
-from flask.ext.login import LoginManager, login_required, login_user, current_user, logout_user
+from flask import session, has_request_context
+from flask.ext.login import LoginManager, login_required, login_user
+from flask.ext.login import current_user, logout_user, AnonymousUserMixin
+from werkzeug.local import LocalProxy
 
 from Game import Game
 from User import User, GamePlayers
+from GameView import GameView
 
 from config import DIRECTORY, SECRET_KEY, db_session, hashulate, init_db
 from forms import LoginForm
@@ -19,6 +23,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+game_view = LocalProxy(lambda:get_game_view())
+
+def get_game_view():
+    if has_request_context() and current_user.is_authenticated():
+        print 'getting game view'
+        if request.args.get('game'):
+            session['current_game'] = request.args.get('game')
+        if session.get('current_game', False):
+            return current_user.view(Game.get(session['current_game']))
+    return None
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -32,6 +46,8 @@ def shutdown_session(exception=None):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    print 'login'
+    print request.args.get('game')
     form = LoginForm(request.form)
     validates = request.method == 'POST' and form.validate()
     if validates:
@@ -65,10 +81,15 @@ def games():
     return current_user.current_games()
 
 
-@app.route('/game/<int:idno>', methods=['PUT', 'POST', 'GET'])
+@app.route('/game/<int:game_id>', methods=['PUT', 'POST', 'GET'])
 @login_required
-def game(idno):
-    print idno
+def game(game_id):
+    print game_id
+
+
+@app.route('/user/<int:user_id>')
+def name_from_id(user_id):
+    return User.get(user_id).username
 
 
 @app.route('/logout')
@@ -76,6 +97,7 @@ def game(idno):
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
 
 @app.before_first_request
 def setup():
@@ -87,6 +109,7 @@ def setup():
     nat = User(username='natalia', password=hashulate('password'))
     game = Game()
     game2 = Game()
+    game3 = Game()
     GamePlayers(game, mike, 0)
     GamePlayers(game, josh, 1)
     GamePlayers(game, kait, 2)
@@ -95,29 +118,21 @@ def setup():
     GamePlayers(game2, josh, 2)
     GamePlayers(game2, kait, 1)
     GamePlayers(game2, nat, 0)
-#    mike.games.append(game)
-#    kait.games.append(game)
-#    josh.games.append(game)
-#    nat.games.append(game)
+    mike.join_game(game3, 2)
+    kait.join_game(game3, 3)
+    josh.join_game(game3,0)
+    nat.join_game(game3, 1)
     db_session.add(mike)
     db_session.add(kait)
     db_session.add(josh)
     db_session.add(nat)
-    db_session.add(game)
-#    db_session.add(game2)
-#    db_session.add(games1)
-#    db_session.add(games2)
-#    db_session.add(games3)
-#    db_session.add(games0)
-#    db_session.add(games0)
-#    db_session.add(games1)
-#    db_session.add(games2)
-#    db_session.add(games3)
     db_session.commit()
     print 'break-----------------------'
     print game == game2
     print 'break-----------------------'
     print User.query.all()
+    print 'break-----------------------'
+    print User.query.filter(User.id == 1).one()
     print 'break-----------------------'
     print Game.query.all()
     print 'break-----------------------'
@@ -135,8 +150,19 @@ def setup():
     print mike.username
     print 'break-----------------------'
     print mike.games[0].players
+    print 'break-----------------------'
+    print GamePlayers.query.filter(GamePlayers.game_id == game2.id, GamePlayers.user_id == mike.id).one().player_number
+    print 'break-----------------------'
+    print mike.player_number(game2)
+    print 'break-----------------------'
+    view = GameView(mike, game2)
+    print view.player_number
+    print 'break-----------------------'
+    print view.json()
+    print 'break-----------------------'
+
+
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-    print User.get(1).username

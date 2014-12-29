@@ -9,6 +9,7 @@ class GameView(object):
     def __init__(self, user=None, game=None):
         self.user = user
         self.game = game
+        self.player_number = user.player_number(game)
 
 
     
@@ -16,8 +17,12 @@ class GameView(object):
     def json(self):
         response = {
             'cards': [],
-            'id': self.game.id,
+            'game_id': self.game.id,
+            'user_id': self.user.id,
             'play_to': self.game.play_to,
             'turn': self.game.turn,
-            'players': self.game.ordered_usernames()
+            'player_ids': [player.id for player in self.game.players],
+            'team1_score': self.game.team1_score,
+            'team2_score': self.game.team2_score
         }
+        return json.dumps(response)

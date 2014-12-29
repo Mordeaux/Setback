@@ -17,9 +17,17 @@ class Game(Base):
     deck = Column(String(332))
     team1_score = Column(Integer)
     team2_score = Column(Integer)
+    play_to = Column(Integer)
+    turn = Column(Integer)
     players = association_proxy('players_list', 'player')
+
+    @staticmethod
+    def get(game_id):
+        return Game.query.filter(Game.id == game_id).one()
 
 
     def __repr__(self):
-        info = tuple([player.username for player in self.players]+[self.id])
-        return '<%s and %s versus %s and %s, id:%r>' % info
+        info = [player.username for player in self.players] + [self.id]
+        # reorder these so teams are correct in __repr__
+        info = (info[0], info[2], info[1], info[3], info[4])
+        return '<%s + %s vs %s + %s, id:%r>' % tuple(info)
