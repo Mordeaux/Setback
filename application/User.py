@@ -16,8 +16,14 @@ class GamePlayers(Base):
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     game_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
     player_number  = Column(Integer)
-    player = relationship('User', backref=backref('games_list', cascade='all, delete-orphan'))
-    game = relationship('Game', backref=backref('players_list', order_by='GamePlayers.player_number', cascade='all, delete-orphan'))
+    hand = Column(String(42))
+    player = relationship('User', 
+                          backref=backref('games_list', 
+                                          cascade='all, delete-orphan'))
+    game = relationship('Game', 
+                        backref=backref('players_list', 
+                                        order_by='GamePlayers.player_number', 
+                                        cascade='all, delete-orphan'))
 
     def __init__(self, game=None, user=None, player_number=None):
         self.game = game
@@ -25,7 +31,8 @@ class GamePlayers(Base):
         self.player_number = player_number
 
     def __repr__(self):
-        return '<Game %r, User %r, Number %r>' % (self.game_id, self.user_id, self.player_number)
+        form = '<Game %r, User %r, Number %r>'
+        return form % (self.game_id, self.user_id, self.player_number)
 
 class User(UserMixin, Base):
     __tablename__ = 'users'

@@ -46,8 +46,6 @@ def shutdown_session(exception=None):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print 'login'
-    print request.args.get('game')
     form = LoginForm(request.form)
     validates = request.method == 'POST' and form.validate()
     if validates:
@@ -108,27 +106,16 @@ def setup():
     josh = User(username='josh', password=hashulate('password'))
     nat = User(username='natalia', password=hashulate('password'))
     game = Game()
-    game2 = Game()
-    game3 = Game()
-    GamePlayers(game, mike, 0)
-    GamePlayers(game, josh, 1)
-    GamePlayers(game, kait, 2)
-    GamePlayers(game, nat, 3)
-    GamePlayers(game2, mike, 3)
-    GamePlayers(game2, josh, 2)
-    GamePlayers(game2, kait, 1)
-    GamePlayers(game2, nat, 0)
-    mike.join_game(game3, 2)
-    kait.join_game(game3, 3)
-    josh.join_game(game3,0)
-    nat.join_game(game3, 1)
+    mike.join_game(game, 0)
+    kait.join_game(game, 1)
+    josh.join_game(game,2)
+    nat.join_game(game, 3)
     db_session.add(mike)
     db_session.add(kait)
     db_session.add(josh)
     db_session.add(nat)
+    game.deal()
     db_session.commit()
-    print 'break-----------------------'
-    print game == game2
     print 'break-----------------------'
     print User.query.all()
     print 'break-----------------------'
@@ -142,23 +129,22 @@ def setup():
     print 'break-----------------------'
     print mike.games
     print 'break-----------------------'
-    print kait.games_list[0].player_number
-    print 'break-----------------------'
-    print mike.username
-    mike.change_name('bjork')
-    print 'break-----------------------'
-    print mike.username
-    print 'break-----------------------'
     print mike.games[0].players
     print 'break-----------------------'
-    print GamePlayers.query.filter(GamePlayers.game_id == game2.id, GamePlayers.user_id == mike.id).one().player_number
-    print 'break-----------------------'
-    print mike.player_number(game2)
-    print 'break-----------------------'
-    view = GameView(mike, game2)
+    view = GameView(mike, game)
     print view.player_number
     print 'break-----------------------'
     print view.json()
+    print 'break-----------------------'
+    print game.players_list
+    print 'break-----------------------'
+    print game.players_list[0].user_id
+    print 'break-----------------------'
+    for player in game.players_list:
+        print 'Player id:%r' % player.user_id
+        print 'Hand: %s' % player.hand
+        print 'break-----------------------'
+    print view.hand
     print 'break-----------------------'
 
 

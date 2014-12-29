@@ -10,6 +10,7 @@ class GameView(object):
         self.user = user
         self.game = game
         self.player_number = user.player_number(game)
+        self.hand = self.game.players_list[self.player_number].hand
 
 
     
