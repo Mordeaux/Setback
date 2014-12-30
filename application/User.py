@@ -1,13 +1,9 @@
-import os
-import json
-import time
-
 from flask.ext.login import UserMixin
-from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from config import DIRECTORY, hashulate, Base
+from config import hashulate, Base
 from GameView import GameView
 
 
@@ -17,12 +13,12 @@ class GamePlayers(Base):
     game_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
     player_number  = Column(Integer)
     hand = Column(String(42))
-    player = relationship('User', 
-                          backref=backref('games_list', 
+    player = relationship('User',
+                          backref=backref('games_list',
                                           cascade='all, delete-orphan'))
-    game = relationship('Game', 
-                        backref=backref('players_list', 
-                                        order_by='GamePlayers.player_number', 
+    game = relationship('Game',
+                        backref=backref('players_list',
+                                        order_by='GamePlayers.player_number',
                                         cascade='all, delete-orphan'))
 
     def __init__(self, game=None, user=None, player_number=None):
@@ -43,7 +39,13 @@ class User(UserMixin, Base):
  
     @staticmethod
     def get(userid):
-        return User.query.filter(User.id == userid).one()
+        if User.query.filter(User.id == userid).count():
+            return User.query.filter(User.id == userid).one()
+        return None
+
+    @staticmethod
+    def username_taken(username):
+        return True if User.query.filter(User.username == username).count() else False
 
     @staticmethod
     def check_password(userid, password):
@@ -66,6 +68,13 @@ class User(UserMixin, Base):
 
     def view(self, game):
         return GameView(self, game)
+
+    def current_games(self):
+        response = {}
+        for game in self.games:
+            if not game.finished:
+                response[game.id] = game.view()
+        return jsonify(response)
  
     def is_authenticated(self):
         """Returns True if the user is authenticated, i.e. they have provided 

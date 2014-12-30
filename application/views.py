@@ -1,5 +1,8 @@
+"""To do:
+- Switch to websockets
+"""
+
 import os
-import json
 
 from random import shuffle
 from flask import Flask, render_template, request, redirect, url_for
@@ -11,10 +14,8 @@ from werkzeug.local import LocalProxy
 from Game import Game
 from User import User, GamePlayers
 from GameView import GameView
-
 from config import DIRECTORY, SECRET_KEY, db_session, hashulate, init_db
 from forms import LoginForm
-
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -27,12 +28,12 @@ game_view = LocalProxy(lambda:get_game_view())
 
 def get_game_view():
     if has_request_context() and current_user.is_authenticated():
-        print 'getting game view'
         if request.args.get('game'):
             session['current_game'] = request.args.get('game')
         if session.get('current_game', False):
             return current_user.view(Game.get(session['current_game']))
     return None
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -67,22 +68,32 @@ def home():
     return render_template('dashboard.html', user=current_user)
 
 
-@app.route('/newgame')
-@login_required
-def new_game():
-    pass
-
-
-@app.route('/game')
+@app.route('/game', methods=['GET', 'POST'])
 @login_required
 def games():
-    return current_user.current_games()
+    if request.method == 'GET':
+        return current_user.current_games()
+    elif request.method == 'POST':
+        game = Game()
+        player1 = request.form.get('player1')
+        player2 = request.form.get('player2')
+        player3 = request.form.get('player3')
+        player4 = request.form.get('player4')
+        User.get(player1).join_game(game, 1)
+        User.get(player2).join_game(game, 2)
+        User.get(player3).join_game(game, 3)
+        User.get(player4).join_game(game, 4)
+        session['current_game'] = game.id
+        return game_view.json()
 
 
-@app.route('/game/<int:game_id>', methods=['PUT', 'POST', 'GET'])
+@app.route('/game/<int:game_id>', methods=['PUT', 'GET'])
 @login_required
 def game(game_id):
-    print game_id
+    if request.method == 'GET':
+        session['current_game'] = game_id
+        timestamp = request.args.get('timestamp')
+        return game_view.respond()
 
 
 @app.route('/user/<int:user_id>')
@@ -94,13 +105,17 @@ def name_from_id(user_id):
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 @app.before_first_request
 def setup():
     if not os.path.isfile(os.path.join(DIRECTORY, 'test.db')):
         init_db()
+
+
+@app.route('/test')
+def test():
     mike = User(username='mordo', password=hashulate('password'))
     kait = User(username='kaitlin', password=hashulate('password'))
     josh = User(username='josh', password=hashulate('password'))
@@ -135,6 +150,7 @@ def setup():
     print view.player_number
     print 'break-----------------------'
     print view.json()
+    print view.view()
     print 'break-----------------------'
     print game.players_list
     print 'break-----------------------'
@@ -146,6 +162,14 @@ def setup():
         print 'break-----------------------'
     print view.hand
     print 'break-----------------------'
+    print view.trick.last_mod
+    print 'break-----------------------'
+    import json
+    print json.dumps(view.trick.last_mod)
+    print 'break-----------------------'
+    print json.loads(json.dumps(view.trick.last_mod))
+    print 'break-----------------------'
+    return "Success"
 
 
 
