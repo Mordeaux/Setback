@@ -5,6 +5,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import hashulate, Base
 from GameView import GameView
+from CustomTypes import Json
 
 
 class GamePlayers(Base):
@@ -12,7 +13,7 @@ class GamePlayers(Base):
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     game_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
     player_number  = Column(Integer)
-    hand = Column(String(42))
+    hand = Column(Json(42))
     player = relationship('User',
                           backref=backref('games_list',
                                           cascade='all, delete-orphan'))
@@ -38,21 +39,29 @@ class User(UserMixin, Base):
     games = association_proxy('games_list', 'game')
  
     @staticmethod
-    def get(userid):
-        if User.query.filter(User.id == userid).count():
-            return User.query.filter(User.id == userid).one()
-        return None
+    def get(user_id):
+        return User.query.get(user_id)
 
     @staticmethod
     def username_taken(username):
         return True if User.query.filter(User.username == username).count() else False
 
     @staticmethod
-    def check_password(userid, password):
-        user = User.query.filter(User.id == userid).first()
+    def check_password(user_id, password):
+        user = User.query.get(user_id)
         if user.password == hashulate(password):
             return True
         return False
+
+    @staticmethod
+    def id_from_name(username):
+        return User.query.filter(User.username == username).one().id
+
+    @staticmethod
+    def get_users():
+        """get a dict of user info for all users. When scale becomes important
+           this will have to be fixed probably"""
+        return {user.id:user.username for user in User.query.all()}
 
     def change_name(self, newname):
         self.username = newname
@@ -73,9 +82,9 @@ class User(UserMixin, Base):
         response = {}
         for game in self.games:
             if not game.finished:
-                response[game.id] = game.view()
-        return jsonify(response)
- 
+                response[game.id] = self.view(game).view()
+        return response
+
     def is_authenticated(self):
         """Returns True if the user is authenticated, i.e. they have provided 
         valid credentials. (Only authenticated users will fulfill the criteria 
