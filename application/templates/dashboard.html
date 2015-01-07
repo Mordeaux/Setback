@@ -5,20 +5,22 @@
 {% endblock %}
 
 {% block body %}
-<div id="topbar"></div>
+<div id="topbar" style="border:1px black solid"></div>
 <div id="display"></div>
 
 <script type="text/template" id="topbar-template">
-  <div id="username">{{ user.username }}</div> <div id="games-list">Games</div> <div id="newgame">New Game</div> <div id="rules">Rules</div>
+  <div id="username"><%= username %></div> <div id="games-list">Games</div> <div id="newgame">New Game</div> <div id="rules">Rules</div>
 </script>
 
 
 
 <script type="text/template" id="dash-template">
 <div id="current-games">
-THESE ARE YOURE GAMES
+THESE ARE YOUR GAMES:
+<% for(i=0;i<games.length;i++) {
+  print('<div id="game_'+games[i]+'">'+games[i]+'</div>');
+} %>
 </div>
-
 </script>
 
 
@@ -50,8 +52,11 @@ THESE ARE YOURE GAMES
 </div>
 </script>
 
+<script type="text/javascript">
+  var user_id = "{{ user.id }}"
+</script>
 
-<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='views.js') }}"></script>
 <script src="{{ url_for('static', filename='setback.js') }}"></script>
-
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

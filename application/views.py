@@ -114,7 +114,10 @@ def get_users():
 
 
 @app.route('/user/<int:user_id>')
+@login_required
 def name_from_id(user_id):
+    if current_user.id == user_id:
+        return jsonify(current_user.model())
     return User.get(user_id).username
 
 

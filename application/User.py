@@ -78,6 +78,14 @@ class User(UserMixin, Base):
     def view(self, game):
         return GameView(self, game)
 
+    def model(self):
+        response = {
+            'id': self.id,
+            'username': self.username,
+            'games': [game.id for game in self.games]
+        }
+        return response
+
     def current_games(self):
         response = {}
         for game in self.games:
