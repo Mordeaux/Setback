@@ -31,6 +31,7 @@ login_manager.login_view = "login"
 game_view = LocalProxy(lambda:get_game_view())
 
 def get_game_view():
+    """Loads the GameView object for each response."""
     if has_request_context() and current_user.is_authenticated():
         if request.args.get('game'):
             session['current_game'] = request.args.get('game')
@@ -51,6 +52,7 @@ def shutdown_session(exception=None):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Logs the user in or creates a new user in the database."""
     form = LoginForm(request.form)
     validates = request.method == 'POST' and form.validate()
     if validates:
@@ -72,12 +74,15 @@ def login():
 @app.route('/')
 @login_required
 def home():
+    """Serves up the setback client-side application."""
     return render_template('dashboard.html', user=current_user)
 
 
 @app.route('/game', methods=['GET', 'POST'])
 @login_required
 def games():
+    """API inpoint for Games collection. GET requests return the user's game
+       collection. POST creates a new game."""
     if request.method == 'GET':
         return jsonify(current_user.current_games())
     elif request.method == 'POST':
@@ -97,6 +102,8 @@ def games():
 @app.route('/game/<int:game_id>', methods=['POST', 'GET'])
 @login_required
 def game(game_id):
+    """API inpoint for Game objects. GET returns the JSON representation of the
+       object for the client. POST lets the user play a card."""
     session['current_game'] = game_id
     if request.method == 'GET':
         time = request.args.get('timestamp')
@@ -110,12 +117,16 @@ def game(game_id):
 @app.route('/user')
 @login_required
 def get_users():
+    """API inpoint that returns a JSON encoded object where the keys are User id
+       numbers and the values are usernames."""
     return jsonify(User.get_users())
 
 
 @app.route('/user/<int:user_id>')
 @login_required
 def name_from_id(user_id):
+    """API inpoint that returns the User's information if querying themself,
+       else returns the User's username."""
     if current_user.id == user_id:
         return jsonify(current_user.model())
     return User.get(user_id).username
@@ -124,12 +135,14 @@ def name_from_id(user_id):
 @app.route('/logout')
 @login_required
 def logout():
+    """Logs the user out."""
     logout_user()
     return redirect(url_for('login'))
 
 
 @app.before_first_request
 def setup():
+    """Initializes the sqlite3 database used in development."""
     if not os.path.isfile(os.path.join(DIRECTORY, 'test.db')):
         init_db()
 
@@ -172,12 +185,25 @@ def test1():
     kait = User.get(2)
     josh = User.get(3)
     nat = User.get(4)    
-    game = game.get(1)
+    game = Game.get(1)
     viewm = mike.view(game)
     viewk = kait.view(game)
-    viewm = josh.view(game)
-    viewm = nat.view(game)
+    viewj = josh.view(game)
+    viewn = nat.view(game)
     viewj.play_card(2)
+    return 'Success'
+
+@app.route('/test2')
+@login_required
+def test2():
+    game = Game()
+    User.get(1).join_game(game, 0)
+    User.get(2).join_game(game, 1)
+    User.get(3).join_game(game, 2)
+    User.get(4).join_game(game, 3)
+    game.deal()
+    db_session.commit()
+    return 'success'
 
 if __name__ == "__main__":
     app.run(debug=True)

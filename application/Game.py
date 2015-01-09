@@ -1,4 +1,3 @@
-import json
 from random import shuffle
 from time import time
 
@@ -12,6 +11,9 @@ from config import Base
 from CustomTypes import Json
 
 class Trick(Base):
+    """This ORM object stores the information relevant to a particular trick,
+       which in setback is the section of a game that occurs between deals.
+       The constructor of this obect takes care of dealing the cards."""
     __tablename__ = 'tricks'
     id = Column(Integer, primary_key=True)
     game_id = Column(Integer, ForeignKey('games.id'))
@@ -30,14 +32,17 @@ class Trick(Base):
     def __init__(self, game):
         deck = [str(n)+s for s in ['d','h','s','c'] for n in range(2, 15)]
         shuffle(deck)
-        game.players_list[0].hand = json.dumps(deck[:6])
-        game.players_list[1].hand = json.dumps(deck[6:12])
-        game.players_list[2].hand = json.dumps(deck[12:18])
-        game.players_list[3].hand = json.dumps(deck[18:24])
+        game.players_list[0].hand = deck[:6]
+        game.players_list[1].hand = deck[6:12]
+        game.players_list[2].hand = deck[12:18]
+        game.players_list[3].hand = deck[18:24]
         self.last_mod = time()
 
 
 class Game(Base):
+    """This ORM object holds all the information relevant to a particular 
+       ongoing Game. Currently all Game logic is being stored in the 
+       GameView object, in an attempt to separate logic and representation."""
     __tablename__ = 'games'
     id = Column(Integer, primary_key=True)
     finished = Column(Boolean, default=False)
@@ -49,9 +54,11 @@ class Game(Base):
 
     @staticmethod
     def get(game_id):
+        """Returns a Game object given its id."""
         return Game.query.get(game_id)
 
     def deal(self):
+        """Deals out a new Trick."""
         self.trick = Trick(self)
 
     def __repr__(self):

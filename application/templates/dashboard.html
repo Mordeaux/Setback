@@ -7,7 +7,9 @@
 {% block body %}
 <div id="topbar" style="border:1px black solid"></div>
 <div id="display"></div>
+{% endblock %}
 
+{% block closing_scripts %}
 <script type="text/template" id="topbar-template">
   <div id="username"><%= username %></div> <div id="games-list">Games</div> <div id="newgame">New Game</div> <div id="rules">Rules</div>
 </script>

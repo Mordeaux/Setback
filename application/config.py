@@ -1,4 +1,7 @@
 import os
+
+from hashlib import sha256
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -33,4 +36,5 @@ SECRET_KEY = '\x13\xf4\x95\xb3\x86p\xbf\x1b\xb6B\xc2b\xf4\x96\xf5\xa78;\x8a+\xf2
 
 def hashulate(password):
     """You can modify this function to change how passwords are saved."""
-    return password+' hashulate is undefined'
+    salt = 'Setback is the coolest!'
+    return sha256(password+salt).hexdigest()

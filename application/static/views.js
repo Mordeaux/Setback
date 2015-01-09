@@ -38,9 +38,12 @@ var DashView = Backbone.View.extend({
     for(i=0;i<this.model.attributes.games.length;i++){
       this.$('#game_'+this.model.attributes.games[i]).click(function(){
         $('#display').html('Your game sir');
-        var games = new GameCollection(); 
+        var games = new GameCollection();
+        console.log(i);
         games.fetch({success:function(m,r,o){
-           console.log(games.toJSON());
+          console.log(games.toJSON());
+          console.log(i);
+          var gameView = new GameView({model:games[i]});
         }});
       });
     }
