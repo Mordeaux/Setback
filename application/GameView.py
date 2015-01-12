@@ -17,9 +17,10 @@ class GameView(object):
            This method must only give the client game state information which
            is meant to be available to the given User, ie. it must not reveal
            other player's hands, or cards which are in the discard pile."""
+        print self.hand
         game = {
             'hand': self.hand,
-            'game_id': self.game.id,
+            'id': self.game.id,
             'user_id': self.user.id,
             'play_to': self.game.play_to,
             'turn': self.trick.turn,
@@ -30,7 +31,9 @@ class GameView(object):
             'last_mod': self.trick.last_mod,
             'leading_suit': self.trick.leading_suit,
             'trump': self.trick.trump,
-            'table': self.trick.table
+            'table': self.trick.table,
+            'player_number': self.player_number,
+            'hands': [len(self.game.players_list[i].hand) for i in range(4)]
         }
         return game
 

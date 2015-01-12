@@ -37,13 +37,10 @@ var DashView = Backbone.View.extend({
     this.$el.html( this.dashTpl( this.model.attributes ) );
     for(i=0;i<this.model.attributes.games.length;i++){
       this.$('#game_'+this.model.attributes.games[i]).click(function(){
-        $('#display').html('Your game sir');
         var games = new GameCollection();
-        console.log(i);
+        var games_id = parseInt(this.id.slice(5));
         games.fetch({success:function(m,r,o){
-          console.log(games.toJSON());
-          console.log(i);
-          var gameView = new GameView({model:games[i]});
+          var gameView = new GameView({'model':games.get(games_id)}).render();
         }});
       });
     }
@@ -60,13 +57,14 @@ var GameView = Backbone.View.extend({
   gameboardTpl: _.template( $('#gameboard-template').html()),
 
   render: function() {
-    this.$el.html( this.handTpl( this.model.attributes ) );
-    var cards = this.model.attributes.cards;
-    for(var i = 0; i < 6; i++){
-        var targetDiv = '#card'+i.toString();
-        //$(targetDiv).load('/static/images/'+cards[i]+'.svg');
-        $(targetDiv).append('<h2>'+cards[i]+'</h2>');
-    }
+    this.$el.html( this.gameboardTpl( this.model.attributes ) );
+    var cards = this.model.attributes.hand;
+    console.log(this.model.attributes.usernames);
+//    for(var i = 0; i < cards.length; i++){
+//        var targetDiv = '#card'+i.toString();
+//        //$(targetDiv).load('/static/images/'+cards[i]+'.svg');
+//        $(targetDiv).append('<h2>'+cards[i]+'</h2>');
+//    }
     return this;
   }
 });
@@ -77,6 +75,10 @@ var GameView = Backbone.View.extend({
 
 var GameCollection = Backbone.Collection.extend({
   model: Game,
-  url: '/game'
+  url: '/game',
+
+  parse: function(response){
+    return response.models
+  }
 });
 

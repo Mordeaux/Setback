@@ -58,6 +58,9 @@ class User(UserMixin, Base):
         """Returns true if the submitted password's hash matches the saved hash
            of the User's password."""
         user = User.query.get(user_id)
+        print user
+        print user.password
+        print hashulate(password)
         if user.password == hashulate(password):
             return True
         return False
@@ -106,11 +109,8 @@ class User(UserMixin, Base):
         """Returns a dictionary which can be jsonified and sent to the client
            where it is loaded and used as the GameCollection constructor's 
            argument."""
-        response = {}
-        for game in self.games:
-            if not game.finished:
-                response[game.id] = self.view(game).view()
-        return response
+        x = [self.view(game).view() for game in self.games if not game.finished]
+        return {'models':x}
 
     def is_authenticated(self):
         """Returns True if the user is authenticated, i.e. they have provided 

@@ -59,7 +59,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         if not User.username_taken(username):
-            user = User(username=username, password=password)
+            user = User(username=username, password=hashulate(password))
             db_session.add(user)
             db_session.commit()
             login_user(user)

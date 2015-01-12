@@ -29,19 +29,38 @@ THESE ARE YOUR GAMES:
 
 <script type="text/template" id="sidebar-template">
 <div id="players">
-  <ul>Mike</ul>
-  <ul>Kaitlin</ul>
-  <ul>Josh</ul>
-  <ul>Natalia</ul>
 </div>
 </script>
 
 <script type="text/template" id="gameboard-template">
 <div id="gameboard">
-{% for i in range(4) %}
-  <div id="player{{i}}">
+  <div id="left_player">
+    <% var index = (player_number + 3) % 4;
+       print(usernames[index]+"'s hand: ");
+       for(i=0;i<hands[index];i++){
+         print('x');
+       }  %>
   </div>
-{% endfor %}
+  <div id="top_player">
+    <% index = (player_number + 2) % 4;
+       print(usernames[index]+"'s hand: ");
+       for(i=0;i<hands[index];i++){
+         print('x');
+       } %>
+
+  </div>
+  <div id="right_player">
+    <% index = (player_number + 1) % 4;
+       print(usernames[index]+"'s hand: ");
+       for(i=0;i<hands[index];i++){
+         print('x');
+       } %>
+
+  </div>
+  <div id="player">
+    <% print('Your hand: ');
+       print(hand); %>
+  </div>
 </div>
 </script>
 
@@ -55,10 +74,15 @@ THESE ARE YOUR GAMES:
 </script>
 
 <script type="text/javascript">
-  var user_id = "{{ user.id }}"
+  var App = {
+    Models: {},
+    Collections: {},
+    Views: {},
+    History: []
+  };
+  var user_id = {{ user.id }};
 </script>
 
 <script src="{{ url_for('static', filename='views.js') }}"></script>
-<script src="{{ url_for('static', filename='setback.js') }}"></script>
 <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}
