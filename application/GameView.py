@@ -53,10 +53,15 @@ class GameView(object):
         # at least 2, because empty bids are stored as 1 in the database,
         # so a bid of less than two will automatically be saved as a pass (0).
         if self.is_turn():
-            if bid <= max(self.bids):
+            if self.player_number == self.game.dealer and bid == 4:
+                self.trick.bid = 4
+                self.trick.bidder = self.player_number
+                self.changed()
+                self.trick.turn = self.player_number
+            elif bid <= max(self.bids):
                 bid = 0
-            self.bids[self.player_number] = bid
-            self.changed()
+                self.bids[self.player_number] = bid
+                self.changed()
             if 1 not in self.bids:
                 self.trick.bid = max(self.bids)
                 self.trick.bidder = list(self.bids).index(max(self.bids))
@@ -78,6 +83,7 @@ class GameView(object):
 
     def is_turn(self):
         """Checks to see that it is the User's turn to play a card or bid."""
+        # This ought to be re-implemented as a decorator
         return True if self.trick.turn == self.player_number else False
 
     def is_playable(self, card):

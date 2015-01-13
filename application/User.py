@@ -21,7 +21,14 @@ class GamePlayers(Base):
     hand3 = Column(String(3))
     hand4 = Column(String(3))
     hand5 = Column(String(3))
+    played0 = Column(String(3))
+    played1 = Column(String(3))
+    played2 = Column(String(3))
+    played3 = Column(String(3))
+    played4 = Column(String(3))
+    played5 = Column(String(3))
     hand = composite(Hand, hand0, hand1, hand2, hand3, hand4, hand5)
+    played = composite(Hand, played0, played1, played2, played3, played4, played5)
     bid = Column(Integer, default=1)
     played_card = Column(String(3))
     player = relationship('User',
@@ -66,9 +73,6 @@ class User(UserMixin, Base):
         """Returns true if the submitted password's hash matches the saved hash
            of the User's password."""
         user = User.query.get(user_id)
-        print user
-        print user.password
-        print hashulate(password)
         if user.password == hashulate(password):
             return True
         return False

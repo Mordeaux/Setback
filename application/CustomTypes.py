@@ -22,9 +22,13 @@ class Hand(MutableComposite):
         return [self.hand0, self.hand1, self.hand2, self.hand3, self.hand4, self.hand5] 
 
     def __eq__(self, other):
-        return isinstance(other, Point) and \
-            other.x == self.x and \
-            other.y == self.y
+        return isinstance(other, Hand) and \
+            other.hand0 == self.hand0 and \
+            other.hand1 == self.hand1 and \
+            other.hand2 == self.hand2 and \
+            other.hand3 == self.hand3 and \
+            other.hand4 == self.hand4 and \
+            other.hand5 == self.hand5
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -40,3 +44,5 @@ class Hand(MutableComposite):
         yield self.hand4
         yield self.hand5
 
+    def pop(self, card):
+        pass

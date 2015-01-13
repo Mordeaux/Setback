@@ -26,6 +26,12 @@ class Trick(Base):
     #because the list will no longer contain a 1.
     #This bs hack will be fixed later though.
     bidder = Column(Integer)
+    winner0 = Column(Integer)
+    winner1 = Column(Integer)
+    winner2 = Column(Integer)
+    winner3 = Column(Integer)
+    winner4 = Column(Integer)
+    winner5 = Column(Integer)
 
     def __init__(self, game):
         deck = [str(n)+s for s in ['d','h','s','c'] for n in range(2, 15)]
@@ -35,7 +41,7 @@ class Trick(Base):
         game.players_list[2].hand = Hand(*[card for card in deck[12:18]])
         game.players_list[3].hand = Hand(*[card for card in deck[18:24]])
         self.last_mod = time()
-        self.turn = 0
+        self.turn = (game.dealer + 1) % 4
 
 
 class Game(Base):
@@ -48,6 +54,7 @@ class Game(Base):
     team1_score = Column(Integer, default=0)
     team2_score = Column(Integer, default=0)
     play_to = Column(Integer, default=21)
+    dealer = Column(Integer, default=0)
     players = association_proxy('players_list', 'player')
     trick = relationship('Trick', backref='game', uselist=False)
     bids = association_proxy('players_list', 'bid')
