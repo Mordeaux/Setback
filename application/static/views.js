@@ -40,7 +40,7 @@ var DashView = Backbone.View.extend({
         App.games.fetch({success:function(m,r,o){
           App.current_game = App.games.get(App.game_id);
           App.gameView = new GameView({'model':App.current_game}).render();
-          App.current_game.on({"change": App.gameView.render()});
+          App.current_game.on({"change": App.gameView.render});
         }});
       });
     }

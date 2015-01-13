@@ -58,7 +58,7 @@ THESE ARE YOUR GAMES:
          print(hand[i]+'</div> ');
        } %>
   </div>
-  <% if (!bid) { %>
+  <% if (!bid && turn == player_number) { %>
   <div id="bid">
     Bid: <div id="bid_2" class="bid">2,</div> 
          <div id="bid_3" class="bid">3,</div> 

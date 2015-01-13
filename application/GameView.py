@@ -1,3 +1,5 @@
+from time import time
+
 from flask import jsonify
 
 class GameView(object):
@@ -9,7 +11,8 @@ class GameView(object):
         self.player_number = user.player_number(game)
         self.hand = game.players_list[self.player_number].hand
         self.trick = game.trick
-        self.bids = self.game.bids
+        self.bids = game.bids
+        self.turn = self.trick.turn
 
     def view(self):
         """Returns a dictionary that can be jsonified and sent to the client
@@ -22,7 +25,7 @@ class GameView(object):
             'id': self.game.id,
             'user_id': self.user.id,
             'play_to': self.game.play_to,
-            'turn': self.trick.turn,
+            'turn': self.turn,
             'player_ids': [player.id for player in self.game.players],
             'usernames': [player.username for player in self.game.players],
             'team1_score': self.game.team1_score,
@@ -33,7 +36,7 @@ class GameView(object):
             'table': list(self.game.table),
             'player_number': self.player_number,
             'hands': [len(self.game.players_list[i].hand) for i in range(4)],
-            'bid': None if max(self.game.bids) == 1 else max(self.game.bids),
+            'bid': None if 1 in self.game.bids else max(self.game.bids),
             'bidder': self.trick.bidder,
             'bids': list(self.bids)
         }
@@ -46,18 +49,18 @@ class GameView(object):
 
     def bid(self, bid):
         """Allows the user to enter a bid, as an integer."""
-        # Until I figure out SQLAlchemy mutability issues for custom types
-        # this will have to look like this
         # Also this currently does not check to make sure the player bids
         # at least 2, because empty bids are stored as 1 in the database,
         # so a bid of less than two will automatically be saved as a pass (0).
-        if not self.is_turn():
-            return
-        if bid <= max(self.bids):
-            bid = 0
-        self.bids[self.player_number] = bid
-        if 1 not in self.bids:
-            self.trick.bidder = bids.index(max(bids))
+        if self.is_turn():
+            if bid <= max(self.bids):
+                bid = 0
+            self.bids[self.player_number] = bid
+            self.changed()
+            if 1 not in self.bids:
+                self.trick.bid = max(self.bids)
+                self.trick.bidder = list(self.bids).index(max(self.bids))
+                self.trick.turn = self.trick.bidder
 
     def set_trump(self, trump):
         """Checks that all bids are in, and that the User is the highest bidder
@@ -71,6 +74,7 @@ class GameView(object):
         table = self.trick.table
         self.hand.remove(card)
         table[self.player_number] = card
+        changed()
 
     def is_turn(self):
         """Checks to see that it is the User's turn to play a card or bid."""
@@ -89,3 +93,7 @@ class GameView(object):
             return True
         else:
             return False
+
+    def changed(self):
+        self.trick.turn = (self.trick.turn +1) % 4
+        self.trick.last_mod = time()
