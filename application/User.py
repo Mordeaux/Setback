@@ -1,11 +1,11 @@
 from flask.ext.login import UserMixin
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, composite
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import hashulate, Base
 from GameView import GameView
-from CustomTypes import Json
+from CustomTypes import Hand
 
 
 class GamePlayers(Base):
@@ -15,7 +15,15 @@ class GamePlayers(Base):
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     game_id = Column(Integer, ForeignKey('games.id'), primary_key=True)
     player_number  = Column(Integer)
-    hand = Column(Json(42))
+    hand0 = Column(String(3))
+    hand1 = Column(String(3))
+    hand2 = Column(String(3))
+    hand3 = Column(String(3))
+    hand4 = Column(String(3))
+    hand5 = Column(String(3))
+    hand = composite(Hand, hand0, hand1, hand2, hand3, hand4, hand5)
+    bid = Column(Integer, default=1)
+    played_card = Column(String(3))
     player = relationship('User',
                           backref=backref('games_list',
                                           cascade='all, delete-orphan'))

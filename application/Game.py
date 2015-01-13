@@ -8,7 +8,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from User import User
 from config import Base
-from CustomTypes import Json
+from CustomTypes import Hand
 
 class Trick(Base):
     """This ORM object stores the information relevant to a particular trick,
@@ -22,21 +22,20 @@ class Trick(Base):
     last_mod = Column(Float)
     leading_suit = Column(Enum('h', 'd', 's', 'c'))
     trump = Column(Enum('h', 'd', 's', 'c'))
-    table = Column(Json(28), default=['', '', '', ''])
     #You can't bid 1 in this game, so it is easy to check that everyone has bid
     #because the list will no longer contain a 1.
     #This bs hack will be fixed later though.
-    bids = Column(Json(12), default=[1, 1, 1, 1])
     bidder = Column(Integer)
 
     def __init__(self, game):
         deck = [str(n)+s for s in ['d','h','s','c'] for n in range(2, 15)]
         shuffle(deck)
-        game.players_list[0].hand = deck[:6]
-        game.players_list[1].hand = deck[6:12]
-        game.players_list[2].hand = deck[12:18]
-        game.players_list[3].hand = deck[18:24]
+        game.players_list[0].hand = Hand(*[card for card in deck[:6]])
+        game.players_list[1].hand = Hand(*[card for card in deck[6:12]])
+        game.players_list[2].hand = Hand(*[card for card in deck[12:18]])
+        game.players_list[3].hand = Hand(*[card for card in deck[18:24]])
         self.last_mod = time()
+        self.turn = 0
 
 
 class Game(Base):
@@ -51,6 +50,8 @@ class Game(Base):
     play_to = Column(Integer, default=21)
     players = association_proxy('players_list', 'player')
     trick = relationship('Trick', backref='game', uselist=False)
+    bids = association_proxy('players_list', 'bid')
+    table = association_proxy('players_list', 'played_card')
 
     @staticmethod
     def get(game_id):

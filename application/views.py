@@ -109,8 +109,13 @@ def game(game_id):
         time = request.args.get('timestamp')
         return jsonify(game_view.view()) if game_view.is_fresh(time) else 304
     elif request.method == 'POST':
-        card_index = request.form.get('card_index')
-        game_view.play_card(card_index)
+        bid = request.form.get('bid')
+        card = request.form.get('card')
+        if bid:
+            game_view.bid(bid)
+        elif card:
+            game_view.play_card(card)
+        db_session.commit()
         return jsonify(game_view.view())
 
 
@@ -165,33 +170,7 @@ def test():
 #    db_session.add(nat)
     game.deal()
     db_session.commit()
-    viewm = mike.view(game)
-    viewk = kait.view(game)
-    viewj = josh.view(game)
-    viewn = nat.view(game)
-    viewm.bid(0)
-    viewk.bid(2)
-    viewj.bid(3)
-    viewn.bid(0)
-    viewj.set_trump('h')
-#    db_session.add(mike)
-    db_session.commit()
     return "SUCCESS"
-
-@app.route('/test1')
-@login_required
-def test1():
-    mike = User.get(1)
-    kait = User.get(2)
-    josh = User.get(3)
-    nat = User.get(4)    
-    game = Game.get(1)
-    viewm = mike.view(game)
-    viewk = kait.view(game)
-    viewj = josh.view(game)
-    viewn = nat.view(game)
-    viewj.play_card(2)
-    return 'Success'
 
 @app.route('/test2')
 @login_required

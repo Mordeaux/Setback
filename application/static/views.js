@@ -7,9 +7,7 @@ var Game = Backbone.Model.extend({});
 /////////////////////////////////
 
 var User = Backbone.Model.extend({
-    url: function () {
-        return '/user/'+this.id;
-    }
+    urlRoot: '/user'
 });
 
 /////////////////////////////////
@@ -37,10 +35,12 @@ var DashView = Backbone.View.extend({
     this.$el.html( this.dashTpl( this.model.attributes ) );
     for(i=0;i<this.model.attributes.games.length;i++){
       this.$('#game_'+this.model.attributes.games[i]).click(function(){
-        var games = new GameCollection();
-        var games_id = parseInt(this.id.slice(5));
-        games.fetch({success:function(m,r,o){
-          var gameView = new GameView({'model':games.get(games_id)}).render();
+        App.games = new GameCollection();
+        App.game_id = parseInt(this.id.slice(5));
+        App.games.fetch({success:function(m,r,o){
+          App.current_game = App.games.get(App.game_id);
+          App.gameView = new GameView({'model':App.current_game}).render();
+          App.current_game.on({"change": App.gameView.render()});
         }});
       });
     }
@@ -52,19 +52,31 @@ var DashView = Backbone.View.extend({
 
 var GameView = Backbone.View.extend({
   el: '#display',
-  handTpl: _.template( $('#hand-template').html()),
-  sidebarTpl: _.template( $('#sidebar-template').html()),
   gameboardTpl: _.template( $('#gameboard-template').html()),
 
   render: function() {
     this.$el.html( this.gameboardTpl( this.model.attributes ) );
-    var cards = this.model.attributes.hand;
-    console.log(this.model.attributes.usernames);
-//    for(var i = 0; i < cards.length; i++){
-//        var targetDiv = '#card'+i.toString();
-//        //$(targetDiv).load('/static/images/'+cards[i]+'.svg');
-//        $(targetDiv).append('<h2>'+cards[i]+'</h2>');
-//    }
+    var turn = this.model.attributes.turn;
+    var player_number = this.model.attributes.player_number;
+    console.log('why is this doubled');
+    if (turn == player_number && App.current_game.get('bid')){
+      this.$('.card').each(function(i, obj){
+        $(obj).click(function(){
+          $.post(App.current_game.url(), {"card": $(this).attr('id')}, function(data){
+            App.current_game.set(data);
+          });
+        });
+      });
+    }
+    else if (turn == player_number){
+      this.$('.bid').each(function(i, obj){
+        $(obj).click(function(){
+          $.post(App.current_game.url(), {"bid": $(this).attr('id').slice(-1)}, function(data){
+            App.current_game.set(data);
+          });
+        });
+      });
+    }
     return this;
   }
 });

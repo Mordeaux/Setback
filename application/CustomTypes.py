@@ -1,16 +1,42 @@
-import json
+from sqlalchemy.ext.mutable import MutableComposite
 
-import sqlalchemy.types as types
+class Hand(MutableComposite):
+    def __init__(self, hand0, hand1, hand2, hand3, hand4, hand5):
+        self.hand0 = hand0
+        self.hand1 = hand1
+        self.hand2 = hand2
+        self.hand3 = hand3
+        self.hand4 = hand4
+        self.hand5 = hand5
 
-# Need to read up on SQLAlchemy mutability to make this work right
-class Json(types.TypeDecorator):
-    """This is a custom Type for SQLAlchemy which allows me to save JSON data
-       and abstracts away the dumping and loading of this into the database."""
+    def __setattr__(self, key, value):
+        "Intercept set events"
 
-    impl = types.String
+        # set the attribute
+        object.__setattr__(self, key, value)
 
-    def process_bind_param(self, value, dialect):
-        return json.dumps(value)
+        # alert all parents to the change
+        self.changed()
 
-    def process_result_value(self, value, dialect):
-        return json.loads(value)
+    def __composite_values__(self):
+        return [self.hand0, self.hand1, self.hand2, self.hand3, self.hand4, self.hand5] 
+
+    def __eq__(self, other):
+        return isinstance(other, Point) and \
+            other.x == self.x and \
+            other.y == self.y
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __len__(self):
+        return len(self.__composite_values__())
+
+    def __iter__(self):
+        yield self.hand0
+        yield self.hand1
+        yield self.hand2
+        yield self.hand3
+        yield self.hand4
+        yield self.hand5
+
