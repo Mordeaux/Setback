@@ -164,6 +164,7 @@ def test():
     kait.join_game(game, 1)
     josh.join_game(game,2)
     nat.join_game(game, 3)
+    db_session.flush()
 #    db_session.add(mike)
 #    db_session.add(kait)
 #    db_session.add(josh)
@@ -180,6 +181,7 @@ def test2():
     User.get(2).join_game(game, 1)
     User.get(3).join_game(game, 2)
     User.get(4).join_game(game, 3)
+    db_session.flush()
     game.deal()
     db_session.commit()
     return 'success'

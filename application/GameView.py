@@ -52,20 +52,20 @@ class GameView(object):
         # Also this currently does not check to make sure the player bids
         # at least 2, because empty bids are stored as 1 in the database,
         # so a bid of less than two will automatically be saved as a pass (0).
+        dealer_bid_4 = self.player_number == self.game.dealer and bid == 4
         if self.is_turn():
-            if self.player_number == self.game.dealer and bid == 4:
-                self.trick.bid = 4
-                self.trick.bidder = self.player_number
-                self.changed()
-                self.trick.turn = self.player_number
-            elif bid <= max(self.bids):
+            if bid <= max(self.bids) and not dealer_bid_4:
                 bid = 0
-                self.bids[self.player_number] = bid
-                self.changed()
+            self.bids[self.player_number] = bid
             if 1 not in self.bids:
                 self.trick.bid = max(self.bids)
-                self.trick.bidder = list(self.bids).index(max(self.bids))
-                self.trick.turn = self.trick.bidder
+                if dealer_bid_4:
+                    self.trick.bidder = self.game.dealer
+                else:
+                    self.trick.bidder = list(self.bids).index(max(self.bids))
+                self.bidding_finished()
+            else:
+                self.changed()
 
     def set_trump(self, trump):
         """Checks that all bids are in, and that the User is the highest bidder
@@ -101,5 +101,9 @@ class GameView(object):
             return False
 
     def changed(self):
-        self.trick.turn = (self.trick.turn +1) % 4
+        self.trick.turn = (self.trick.turn + 1) % 4
+        self.trick.last_mod = time()
+
+    def bidding_finished(self):
+        self.trick.turn = self.trick.bidder
         self.trick.last_mod = time()
