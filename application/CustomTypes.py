@@ -45,4 +45,22 @@ class Hand(MutableComposite):
         yield self.hand5
 
     def pop(self, card):
-        pass
+        if card in self.__composite_values__():
+            if card == self.hand0:
+                self.hand0 = None
+                return card
+            elif card == self.hand1:
+                self.hand1 = None
+                return card
+            elif card == self.hand2:
+                self.hand2 = None
+                return card
+            elif card == self.hand3:
+                self.hand3 = None
+                return card
+            elif card == self.hand4:
+                self.hand4 = None
+                return card
+            elif card == self.hand5:
+                self.hand5 = None
+                return card

@@ -40,7 +40,7 @@ var DashView = Backbone.View.extend({
         App.games.fetch({success:function(m,r,o){
           App.current_game = App.games.get(App.game_id);
           App.gameView = new GameView({'model':App.current_game}).render();
-          App.current_game.on({"change": App.gameView.render});
+          App.current_game.on({"change": function(){App.gameView.render();}});
         }});
       });
     }
@@ -58,10 +58,20 @@ var GameView = Backbone.View.extend({
     this.$el.html( this.gameboardTpl( this.model.attributes ) );
     var turn = this.model.attributes.turn;
     var player_number = this.model.attributes.player_number;
-    console.log('why is this doubled');
-    if (turn == player_number && App.current_game.get('bid')){
-      this.$('.card').each(function(i, obj){
+    if (turn == player_number && App.current_game.get('bid') && !App.current_game.get('trump')){
+      this.$('.trump').each(function(i, obj){
         $(obj).click(function(){
+          $.post(App.current_game.url(), {"trump": $(this).attr('id').slice(-1)}, function(data){
+            App.current_game.set(data);
+          });
+        });
+      });
+    } 
+    else if (turn == player_number && App.current_game.get('bid')){
+      this.$('.card').each(function(i, obj){
+        console.log($(obj).attr('id'));
+        $(obj).click(function(){
+          console.log($(this).attr('id'));
           $.post(App.current_game.url(), {"card": $(this).attr('id')}, function(data){
             App.current_game.set(data);
           });

@@ -109,12 +109,15 @@ def game(game_id):
         time = request.args.get('timestamp')
         return jsonify(game_view.view()) if game_view.is_fresh(time) else 304
     elif request.method == 'POST':
-        bid = int(request.form.get('bid'))
+        bid = request.form.get('bid')
         card = request.form.get('card')
+        trump = request.form.get('trump')
         if bid:
-            game_view.bid(bid)
+            game_view.bid(int(bid))
         elif card:
             game_view.play_card(card)
+        elif trump:
+            game_view.set_trump(trump)
         db_session.commit()
         return jsonify(game_view.view())
 

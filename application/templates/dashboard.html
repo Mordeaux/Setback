@@ -28,6 +28,13 @@ THESE ARE YOUR GAMES:
 
 <script type="text/template" id="gameboard-template">
 <div id="gameboard">
+  Game: #<%= id %><br>
+  <% if (trump) { %>
+  Trump: <%= trump %><br>
+  <% } %>
+  <% if (leading_suit) { %>
+  <%= leading_suit %> led<br>
+  <% } %>
   <div id="left_player">
     <% var index = (player_number + 3) % 4;
        print(usernames[index]+"'s hand: ");
@@ -63,6 +70,14 @@ THESE ARE YOUR GAMES:
     Bid: <div id="bid_2" class="bid">2,</div> 
          <div id="bid_3" class="bid">3,</div> 
          <div id="bid_4" class="bid">4</div>
+  </div>
+  <% } 
+   else if (bid && !trump && turn == player_number) { %>
+  <div id="trump">
+    Choose Trump: <div id="trump_h" class="trump">Hearts,</div>
+                  <div id="trump_s" class="trump">Spades,</div>
+                  <div id="trump_d" class="trump">Diamonds,</div>
+                  <div id="trump_c" class="trump">Clubs</div>
   </div>
   <% } %>
 </div>

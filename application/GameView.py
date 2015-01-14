@@ -20,8 +20,9 @@ class GameView(object):
            This method must only give the client game state information which
            is meant to be available to the given User, ie. it must not reveal
            other player's hands, or cards which are in the discard pile."""
+        f = lambda x: len(filter(lambda y: y != None, x))
         game = {
-            'hand': list(self.hand),
+            'hand': filter(lambda x: x != None, list(self.hand)),
             'id': self.game.id,
             'user_id': self.user.id,
             'play_to': self.game.play_to,
@@ -35,7 +36,7 @@ class GameView(object):
             'trump': self.trick.trump,
             'table': list(self.game.table),
             'player_number': self.player_number,
-            'hands': [len(self.game.players_list[i].hand) for i in range(4)],
+            'hands': [f(self.game.players_list[i].hand) for i in range(4)],
             'bid': None if 1 in self.game.bids else max(self.game.bids),
             'bidder': self.trick.bidder,
             'bids': list(self.bids)
@@ -70,16 +71,15 @@ class GameView(object):
     def set_trump(self, trump):
         """Checks that all bids are in, and that the User is the highest bidder
            then sets trump to the chosen suit."""
-        self.trick.trump = trump
+        if not self.trick.trump and self.trick.bidder == self.player_number:
+            self.trick.trump = trump
+            self.bidding_finished()
 
     def play_card(self, card):
-        """Takes a numerical index and plays the card at that index."""
-        if not (self.is_playable(card) and self.is_turn()):
-            return 
-        table = self.trick.table
-        self.hand.remove(card)
-        table[self.player_number] = card
-        changed()
+        """Takes a card and plays it."""
+        if self.is_playable(card) and self.is_turn():
+            self.game.table[self.player_number] = self.hand.pop(card)
+            self.changed()
 
     def is_turn(self):
         """Checks to see that it is the User's turn to play a card or bid."""
@@ -89,9 +89,12 @@ class GameView(object):
     def is_playable(self, card):
         """Checks that it is possible to play a given card, according to the 
            rules of the game."""
+        leading_suit = self.trick.leading_suit
+        if not leading_suit:
+            self.trick.leading_suit = card[-1]
+            return True
         hand = self.hand
         trump = self.trick.trump
-        leading_suit = self.trick.leading_suit
         playables = filter(lambda x: x[-1] in [leading_suit, trump], hand)
         if not playables:
             return True
