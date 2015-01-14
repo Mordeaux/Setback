@@ -189,5 +189,20 @@ def test2():
     db_session.commit()
     return 'success'
 
+@app.route('/test3')
+@login_required
+def test3():
+    game = Game.get(1)
+    print game.hands
+    for hand in game.hands:
+        print list(hand)
+    game.trick.team1.append(['12s', '3d', '14c', '7d'])
+    print game.trick.team1
+    for x in game.trick.team1:
+        for y in x:
+            print y
+    db_session.commit()
+    return 'ey'
+
 if __name__ == "__main__":
     app.run(debug=True)

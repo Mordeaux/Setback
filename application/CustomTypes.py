@@ -64,3 +64,33 @@ class Hand(MutableComposite):
             elif card == self.hand5:
                 self.hand5 = None
                 return card
+
+
+class Discards(object):
+    def __init__(self, card0, card1, card2, card3):
+        self.card0 = card0
+        self.card1 = card1
+        self.card2 = card2
+        self.card3 = card3
+
+    def __composite_values__(self):
+        return [self.card0, self.card1, self.card2, self.card3] 
+
+    def __eq__(self, other):
+        return isinstance(other, Discards) and \
+            other.card0 == self.card0 and \
+            other.card1 == self.card1 and \
+            other.card2 == self.card2 and \
+            other.card3 == self.card3
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __len__(self):
+        return len(self.__composite_values__())
+
+    def __iter__(self):
+        yield self.card0
+        yield self.card1
+        yield self.card2
+        yield self.card3

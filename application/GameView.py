@@ -2,6 +2,8 @@ from time import time
 
 from flask import jsonify
 
+from CustomTypes import Discards
+
 class GameView(object):
     """Takes a User object and a Game object and provides methods to interact with that Game as that User."""
 
@@ -9,10 +11,11 @@ class GameView(object):
         self.user = user
         self.game = game
         self.player_number = user.player_number(game)
-        self.hand = game.players_list[self.player_number].hand
+        self.hand = game.hands[self.player_number]
         self.trick = game.trick
         self.bids = game.bids
         self.turn = self.trick.turn
+        self.f = lambda x: len(filter(lambda y: y != None, x))
 
     def view(self):
         """Returns a dictionary that can be jsonified and sent to the client
@@ -20,7 +23,6 @@ class GameView(object):
            This method must only give the client game state information which
            is meant to be available to the given User, ie. it must not reveal
            other player's hands, or cards which are in the discard pile."""
-        f = lambda x: len(filter(lambda y: y != None, x))
         game = {
             'hand': filter(lambda x: x != None, list(self.hand)),
             'id': self.game.id,
@@ -36,7 +38,7 @@ class GameView(object):
             'trump': self.trick.trump,
             'table': list(self.game.table),
             'player_number': self.player_number,
-            'hands': [f(self.game.players_list[i].hand) for i in range(4)],
+            'hands': [self.f(self.game.hands[i]) for i in range(4)],
             'bid': None if 1 in self.game.bids else max(self.game.bids),
             'bidder': self.trick.bidder,
             'bids': list(self.bids)
@@ -79,7 +81,10 @@ class GameView(object):
         """Takes a card and plays it."""
         if self.is_playable(card) and self.is_turn():
             self.game.table[self.player_number] = self.hand.pop(card)
-            self.changed()
+            if self.f(self.game.table) == 4:
+                self.tally()
+            else:
+                self.changed()
 
     def is_turn(self):
         """Checks to see that it is the User's turn to play a card or bid."""
@@ -110,3 +115,6 @@ class GameView(object):
     def bidding_finished(self):
         self.trick.turn = self.trick.bidder
         self.trick.last_mod = time()
+
+    def tally(self):
+        pass

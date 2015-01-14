@@ -3,12 +3,44 @@ from time import time
 
 from sqlalchemy import Column, Integer, String, Enum
 from sqlalchemy import ForeignKey, Boolean, Float
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, composite
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from User import User
 from config import Base
-from CustomTypes import Hand
+from CustomTypes import Hand, Discards
+
+class Team1(Base):
+    __tablename__ = 'team_1'
+    id = Column(Integer, primary_key=True)
+    card0 = Column(String(3))
+    card1 = Column(String(3))
+    card2 = Column(String(3))
+    card3 = Column(String(3))
+    cards = composite(Discards, card0, card1, card2, card3)
+    trick_id = Column(Integer, ForeignKey('tricks.id'))
+    trick = relationship('Trick',
+                        backref=backref('team1_discards',
+                                        cascade='all, delete-orphan'))
+
+    def __init__(self, discards):
+        self.cards = Discards(*discards)
+
+class Team2(Base):
+    __tablename__ = 'team_2'
+    id = Column(Integer, primary_key=True)
+    card0 = Column(String(3))
+    card1 = Column(String(3))
+    card2 = Column(String(3))
+    card3 = Column(String(3))
+    cards = composite(Discards, card0, card1, card2, card3)
+    trick_id = Column(Integer, ForeignKey('tricks.id'))
+    trick = relationship('Trick',
+                        backref=backref('team2_discards',
+                                        cascade='all, delete-orphan'))
+
+    def __init__(self, discards):
+        self.cards = Discards(*discards)
 
 class Trick(Base):
     """This ORM object stores the information relevant to a particular trick,
@@ -26,22 +58,21 @@ class Trick(Base):
     #because the list will no longer contain a 1.
     #This bs hack will be fixed later though.
     bidder = Column(Integer)
-    winner0 = Column(Integer)
-    winner1 = Column(Integer)
-    winner2 = Column(Integer)
-    winner3 = Column(Integer)
-    winner4 = Column(Integer)
-    winner5 = Column(Integer)
+    team1 = association_proxy('team1_discards', 'cards')
+    team2 = association_proxy('team2_discards', 'cards')
 
     def __init__(self, game):
         deck = [str(n)+s for s in ['d','h','s','c'] for n in range(2, 15)]
         shuffle(deck)
-        game.players_list[0].hand = Hand(*[card for card in deck[:6]])
-        game.players_list[1].hand = Hand(*[card for card in deck[6:12]])
-        game.players_list[2].hand = Hand(*[card for card in deck[12:18]])
-        game.players_list[3].hand = Hand(*[card for card in deck[18:24]])
+        game.hands[0] = Hand(*deck[:6])
+        game.hands[1] = Hand(*deck[6:12])
+        game.hands[2] = Hand(*deck[12:18])
+        game.hands[3] = Hand(*deck[18:24])
         self.last_mod = time()
         self.turn = (game.dealer + 1) % 4
+
+    def discard(self, winner):
+        pass
 
 
 class Game(Base):
@@ -59,6 +90,7 @@ class Game(Base):
     trick = relationship('Trick', backref='game', uselist=False)
     bids = association_proxy('players_list', 'bid')
     table = association_proxy('players_list', 'played_card')
+    hands = association_proxy('players_list', 'hand')
 
     @staticmethod
     def get(game_id):
