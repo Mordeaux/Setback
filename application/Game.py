@@ -71,10 +71,6 @@ class Trick(Base):
         self.last_mod = time()
         self.turn = (game.dealer + 1) % 4
 
-    def discard(self, winner):
-        pass
-
-
 class Game(Base):
     """This ORM object holds all the information relevant to a particular 
        ongoing Game. Currently all Game logic is being stored in the 

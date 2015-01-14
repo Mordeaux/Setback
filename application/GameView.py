@@ -15,7 +15,7 @@ class GameView(object):
         self.trick = game.trick
         self.bids = game.bids
         self.turn = self.trick.turn
-        self.f = lambda x: len(filter(lambda y: y != None, x))
+        self.f = lambda x: len(filter(None, x))
 
     def view(self):
         """Returns a dictionary that can be jsonified and sent to the client
@@ -24,7 +24,7 @@ class GameView(object):
            is meant to be available to the given User, ie. it must not reveal
            other player's hands, or cards which are in the discard pile."""
         game = {
-            'hand': filter(lambda x: x != None, list(self.hand)),
+            'hand': filter(None, self.hand),
             'id': self.game.id,
             'user_id': self.user.id,
             'play_to': self.game.play_to,
@@ -82,7 +82,8 @@ class GameView(object):
         if self.is_playable(card) and self.is_turn():
             self.game.table[self.player_number] = self.hand.pop(card)
             if self.f(self.game.table) == 4:
-                self.tally()
+                print 'discarding'
+                self.discard()
             else:
                 self.changed()
 
@@ -116,5 +117,26 @@ class GameView(object):
         self.trick.turn = self.trick.bidder
         self.trick.last_mod = time()
 
-    def tally(self):
+    def discard(self):
+        number = lambda x,y: x if int(x[:-1]) > int(y[:-1]) else y
+        suit = lambda suit:lambda x: True if x[-1] == suit else False
+        leading_suit = self.trick.leading_suit
+        table = list(self.game.table)
+        try:
+            winner = table.index(reduce(number, filter(suit(self.trump), table)))
+        except TypeError:
+            winner = table.index(reduce(number, filter(suit(leading_suit), table)))
+        if winner in [0,2]:
+            self.trick.team1.append(table)
+        else:
+            self.trick.team2.append(table)
+        self.game.table = [None] * 4
+        if not self.f(self.hand):
+            self.next_trick()
+        else:
+            self.trick.turn = winner
+            self.trick.last_mod = time()
+
+    def next_trick(self):
         pass
+
