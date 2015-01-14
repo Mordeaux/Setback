@@ -27,7 +27,7 @@ THESE ARE YOUR GAMES:
 
 
 <script type="text/template" id="gameboard-template">
-<div id="gameboard">
+<div id="sidebar">
   Game: #<%= id %><br>
   <% if (trump) { %>
   Trump: <%= trump %><br>
@@ -35,8 +35,9 @@ THESE ARE YOUR GAMES:
   <% if (leading_suit) { %>
   <%= leading_suit %> led<br>
   <% } %>
-  <div id="left_player">
+  <div id="right_player">
     <% var index = (player_number + 3) % 4;
+       var right = index;
        print(usernames[index]+"'s hand: ");
        for(i=0;i<hands[index];i++){
          print('x');
@@ -44,23 +45,35 @@ THESE ARE YOUR GAMES:
   </div>
   <div id="top_player">
     <% index = (player_number + 2) % 4;
+       var top = index;
        print(usernames[index]+"'s hand: ");
        for(i=0;i<hands[index];i++){
          print('x');
        } %>
-
   </div>
-  <div id="right_player">
+  <div id="left_player">
     <% index = (player_number + 1) % 4;
+       var left = index;
        print(usernames[index]+"'s hand: ");
        for(i=0;i<hands[index];i++){
          print('x');
        } %>
-
   </div>
-  <div id="player">
+
+  <div id="turn">
+    <% if (turn == player_number){
+         print("It's your turn");
+       }
+       else{
+         print("It's "+usernames[turn]+"'s turn");
+       } %>
+  </div>
+</div>
+
+<div id="control">
+  <div id="hand">
      Your hand: 
-  <%  for (i=0; i<hand.length; i++){
+    <% for (i=0; i<hand.length; i++){
          print('<div id="'+hand[i]+'" class="card">');
          print(hand[i]+'</div> ');
        } %>
@@ -82,13 +95,19 @@ THESE ARE YOUR GAMES:
   <% } %>
 </div>
 
-<div id="turn">
-<% if (turn == player_number){
-     print("It's your turn");
-   }
-   else{
-     print("It's "+usernames[turn]+"'s turn");
-   } %>
+<div id="table">
+  <div id="right_card">
+    <%= table[right] %>
+  </div>
+  <div id="top_card">
+    <%= table[top] %>
+  </div>
+  <div id="left_card">
+    <%= table[left] %>
+  </div>
+  <div id="bottom_card">
+    <%= table[player_number] %>
+  </div>
 </div>
 </script>
 
