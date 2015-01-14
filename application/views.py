@@ -107,7 +107,7 @@ def game(game_id):
     session['current_game'] = game_id
     if request.method == 'GET':
         time = request.args.get('timestamp')
-        return jsonify(game_view.view()) if game_view.is_fresh(time) else 304
+        return jsonify(game_view.view()) if game_view.is_fresh(time) else 304,'No Change'
     elif request.method == 'POST':
         bid = request.form.get('bid')
         card = request.form.get('card')
@@ -196,9 +196,9 @@ def test3():
     print game.hands
     for hand in game.hands:
         print list(hand)
-    game.trick.team1.append(['12s', '3d', '14c', '7d'])
-    print game.trick.team1
-    for x in game.trick.team1:
+    game.trick.team2.append(['12s', '3d', '14c', '7d'])
+    print game.trick.team2
+    for x in game.trick.team2:
         for y in x:
             print y
     db_session.commit()

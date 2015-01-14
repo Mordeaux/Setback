@@ -87,6 +87,7 @@ var GameView = Backbone.View.extend({
         });
       });
     }
+    App.wait();
     return this;
   }
 });

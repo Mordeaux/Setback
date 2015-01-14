@@ -99,7 +99,7 @@ class GameView(object):
         if not leading_suit:
             self.trick.leading_suit = card[-1]
             return True
-        hand = self.hand
+        hand = filter(None, self.hand)
         trump = self.trick.trump
         playables = filter(lambda x: x[-1] in [leading_suit, trump], hand)
         if not playables:
@@ -123,19 +123,24 @@ class GameView(object):
         leading_suit = self.trick.leading_suit
         table = list(self.game.table)
         try:
-            winner = table.index(reduce(number, filter(suit(self.trump), table)))
+            winner = table.index(reduce(number, filter(suit(self.trick.trump), table)))
         except TypeError:
             winner = table.index(reduce(number, filter(suit(leading_suit), table)))
         if winner in [0,2]:
             self.trick.team1.append(table)
         else:
             self.trick.team2.append(table)
-        self.game.table = [None] * 4
+        self.game.table[0] = None
+        self.game.table[1] = None
+        self.game.table[2] = None
+        self.game.table[3] = None
+        self.trick.leading_suit = None
         if not self.f(self.hand):
             self.next_trick()
         else:
             self.trick.turn = winner
             self.trick.last_mod = time()
+            self.trick.leading_suit = None
 
     def next_trick(self):
         pass
