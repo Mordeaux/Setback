@@ -107,6 +107,7 @@ def game(game_id):
     session['current_game'] = game_id
     if request.method == 'GET':
         time = request.args.get('timestamp')
+        print time
         return jsonify(game_view.view()) if game_view.is_fresh(time) else 304,'No Change'
     elif request.method == 'POST':
         bid = request.form.get('bid')
