@@ -33,7 +33,7 @@ class GameView(object):
             'usernames': [player.username for player in self.game.players],
             'team1_score': self.game.team1_score,
             'team2_score': self.game.team2_score,
-            'last_mod': int(self.trick.last_mod),
+            'last_mod': self.trick.last_mod,
             'leading_suit': self.trick.leading_suit,
             'trump': self.trick.trump,
             'table': list(self.game.table),

@@ -69,9 +69,7 @@ var GameView = Backbone.View.extend({
     } 
     else if (turn == player_number && App.current_game.get('bid')){
       this.$('.card').each(function(i, obj){
-        console.log($(obj).attr('id'));
         $(obj).click(function(){
-          console.log($(this).attr('id'));
           $.post(App.current_game.url(), {"card": $(this).attr('id')}, function(data){
             App.current_game.set(data);
           });

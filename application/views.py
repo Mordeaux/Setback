@@ -106,9 +106,9 @@ def game(game_id):
        object for the client. POST lets the user play a card."""
     session['current_game'] = game_id
     if request.method == 'GET':
-        time = request.args.get('timestamp')
+        time = float(request.args.get('timestamp'))
         print time
-        return jsonify(game_view.view()) if game_view.is_fresh(time) else 304,'No Change'
+        return jsonify(game_view.view()) if not game_view.is_fresh(time) else 'boner'
     elif request.method == 'POST':
         bid = request.form.get('bid')
         card = request.form.get('card')
