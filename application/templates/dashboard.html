@@ -23,12 +23,18 @@ THESE ARE YOUR GAMES:
   print('<div id="game_'+games[i]+'">'+games[i]+'</div>');
 } %>
 </div>
+
+New Game:<br>
+Team 1:<br> 
+Team 2:
 </script>
 
 
 <script type="text/template" id="gameboard-template">
 <div id="sidebar">
   Game: #<%= id %><br>
+  Team 1: <%= team1_score %><br>
+  Team 2: <%= team2_score %><br>
   <% if (trump) { %>
   Trump: <%= trump %><br>
   <% } %>

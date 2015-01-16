@@ -107,8 +107,7 @@ def game(game_id):
     session['current_game'] = game_id
     if request.method == 'GET':
         time = float(request.args.get('timestamp'))
-        print time
-        return jsonify(game_view.view()) if not game_view.is_fresh(time) else 'boner'
+        return jsonify(game_view.view()) if not game_view.is_fresh(time) else 'null'
     elif request.method == 'POST':
         bid = request.form.get('bid')
         card = request.form.get('card')
@@ -116,6 +115,8 @@ def game(game_id):
         if bid:
             game_view.bid(int(bid))
         elif card:
+            print 'views'
+            print card
             game_view.play_card(card)
         elif trump:
             game_view.set_trump(trump)

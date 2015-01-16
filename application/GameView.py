@@ -79,12 +79,15 @@ class GameView(object):
 
     def play_card(self, card):
         """Takes a card and plays it."""
+        print 'playing?'
         if self.is_playable(card) and self.is_turn():
+            print 'playing'
             self.game.table[self.player_number] = self.hand.pop(card)
+            print list(self.game.table)
             if self.f(self.game.table) == 4:
-                print 'discarding'
                 self.discard()
             else:
+                print 'changing'
                 self.changed()
 
     def is_turn(self):
@@ -101,10 +104,13 @@ class GameView(object):
             return True
         hand = filter(None, self.hand)
         trump = self.trick.trump
-        playables = filter(lambda x: x[-1] in [leading_suit, trump], hand)
+        playables = [x for x in hand if x[-1] in [leading_suit, trump]]
+        print hand
+        print playables
         if not playables:
             return True
         elif card in playables:
+            print 'playable'
             return True
         else:
             return False
@@ -143,5 +149,58 @@ class GameView(object):
             self.trick.leading_suit = None
 
     def next_trick(self):
-        pass
+        trump = self.trick.trump
+        bidder = self.trick.bidder
+        bid = max(self.bids)
+        score1 = 0
+        score2 = 0
+        print self.game.trick.team1
+        print self.game.trick.team2
+        team1 = [card for group in self.game.trick.team1 for card in list(group)]
+        print 'team1: ', team1
+        team2 = [card for group in self.game.trick.team2 for card in list(group)]
+        print 'team2: ', team2
+        trump_cards = [card for card in team1+team2 if card[-1] == trump]
+        high = max(trump_cards, key=lambda x:int(x[:-1]))
+        print high
+        low = min(trump_cards, key=lambda x:int(x[:-1]))
+        print low
+        jack = '11'+trump
+        game_count = lambda x: 10 if x[1] == '0' else int(card[1])
+        team1_game = sum([game_count(card) for card in team1 if len(card)>2])
+        print 'team1 game', team1_game
+        team2_game = sum([game_count(card) for card in team2 if len(card)>2])
+        print 'team2 game', team2_game
+        for point in (high, low, jack):
+            if point in team1:
+               print point+' goes to team1'
+               score1 += 1
+            elif point in team2:
+               print point+' goes to team2'
+               score2 += 1
+        if team1_game > team2_game:
+           print 'team1 gets game'
+           score1 += 1
+        elif team2_game > team1_game:
+           print 'team2 gets game'
+           score2 += 1
+        self.game.team1_score += score1
+        self.game.team2_score += score2
+        self.game.dealer = (self.game.dealer + 1) % 4
+        print self.game.dealer
+        if not self.finished():
+            self.game.deal()
+        else:
+            pass
+
+    def finished(self):
+        return False
+        
+
+        
+
+
+
+
+
 
