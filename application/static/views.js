@@ -65,9 +65,11 @@ var DashView = Backbone.View.extend({
       App.users[0] = '';
       for (var user in App.users){
         if (user != App.user.get('id')){
-          $("#player3").append($('<option>', {value:user, id:'u'+user}).text(App.users[user]));
-          $("#player2").append($('<option>', {value:user, id:'u'+user}).text(App.users[user]));
-          $("#player4").append($('<option>', {value:user, id:'u'+user}).text(App.users[user]));
+          if (!$('#u'+user).length > 0){
+            $("#player3").append($('<option>', {value:user, id:'u'+user}).text(App.users[user]));
+            $("#player2").append($('<option>', {value:user, id:'u'+user}).text(App.users[user]));
+            $("#player4").append($('<option>', {value:user, id:'u'+user}).text(App.users[user]));
+          }
         }
       }
       $('select').change(function(){
