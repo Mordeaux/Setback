@@ -41,7 +41,8 @@ class GameView(object):
             'hands': [self.f(self.game.hands[i]) for i in range(4)],
             'bid': None if 1 in self.game.bids else max(self.game.bids),
             'bidder': self.trick.bidder,
-            'bids': list(self.bids)
+            'bids': list(self.bids),
+            'message':None
         }
         return game
 
@@ -188,19 +189,15 @@ class GameView(object):
         self.game.team2_score += score2
         self.game.dealer = (self.game.dealer + 1) % 4
         print self.game.dealer
-        if not self.finished():
+        if not self.finished(score1, score2):
             self.game.deal()
-        else:
-            pass
 
-    def finished(self):
-        return False
+    def finished(self, score1, score2):
+        play_to = self.game.play_to
+        team1 = score1 >= play_to and (score1 - score2) >= 2
+        team2 = score2 >= play_to and (score2 - score1) >= 2
+        return team1 or team2
         
 
         
-
-
-
-
-
 

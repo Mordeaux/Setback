@@ -83,20 +83,21 @@ def home():
 def games():
     """API inpoint for Games collection. GET requests return the user's game
        collection. POST creates a new game."""
-    if request.method == 'GET':
-        return jsonify(current_user.current_games())
-    elif request.method == 'POST':
+    if request.method == 'POST':
         game = Game()
-        player1 = request.form.get('player1')
-        player2 = request.form.get('player2')
-        player3 = request.form.get('player3')
-        player4 = request.form.get('player4')
-        User.get(player1).join_game(game, 1)
-        User.get(player2).join_game(game, 2)
-        User.get(player3).join_game(game, 3)
-        User.get(player4).join_game(game, 4)
+        player1 = int(request.form.get('player1'))
+        player2 = int(request.form.get('player2'))
+        player3 = int(request.form.get('player3'))
+        player4 = int(request.form.get('player4'))
+        User.get(player1).join_game(game, 0)
+        User.get(player2).join_game(game, 1)
+        User.get(player3).join_game(game, 2)
+        User.get(player4).join_game(game, 3)
+        db_session.flush()
+        game.deal()
+        db_session.commit()
         session['current_game'] = game.id
-        return jsonify(game_view.view())
+    return jsonify(current_user.current_games())
 
 
 @app.route('/game/<int:game_id>', methods=['POST', 'GET'])
@@ -115,8 +116,6 @@ def game(game_id):
         if bid:
             game_view.bid(int(bid))
         elif card:
-            print 'views'
-            print card
             game_view.play_card(card)
         elif trump:
             game_view.set_trump(trump)
@@ -164,47 +163,8 @@ def test():
     kait = User(username='kaitlin', password=hashulate('password'))
     josh = User(username='josh', password=hashulate('password'))
     nat = User(username='natalia', password=hashulate('password'))
-    game = Game()
-    mike.join_game(game, 0)
-    kait.join_game(game, 1)
-    josh.join_game(game,2)
-    nat.join_game(game, 3)
-    db_session.flush()
-#    db_session.add(mike)
-#    db_session.add(kait)
-#    db_session.add(josh)
-#    db_session.add(nat)
-    game.deal()
     db_session.commit()
     return "SUCCESS"
-
-@app.route('/test2')
-@login_required
-def test2():
-    game = Game()
-    User.get(1).join_game(game, 0)
-    User.get(2).join_game(game, 1)
-    User.get(3).join_game(game, 2)
-    User.get(4).join_game(game, 3)
-    db_session.flush()
-    game.deal()
-    db_session.commit()
-    return 'success'
-
-@app.route('/test3')
-@login_required
-def test3():
-    game = Game.get(1)
-    print game.hands
-    for hand in game.hands:
-        print list(hand)
-    game.trick.team2.append(['12s', '3d', '14c', '7d'])
-    print game.trick.team2
-    for x in game.trick.team2:
-        for y in x:
-            print y
-    db_session.commit()
-    return 'ey'
 
 if __name__ == "__main__":
     app.run(debug=True)

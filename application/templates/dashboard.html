@@ -2,6 +2,12 @@
 
 {% block head %}
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gameboard.css') }}">
+  <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+  <script src="{{ url_for('static', filename='jquery-2.0.0.min.js') }}"></script>
+  <!--<script src="http://underscorejs.org/underscore-min.js"></script>-->
+  <script src="{{ url_for('static', filename='underscore-min.js') }}"></script>
+  <!--<script src="http://backbonejs.org/backbone-min.js"></script>-->
+  <script src="{{ url_for('static', filename='backbone-min.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -15,7 +21,6 @@
 </script>
 
 
-
 <script type="text/template" id="dash-template">
 <div id="current-games">
 THESE ARE YOUR GAMES:
@@ -24,9 +29,30 @@ THESE ARE YOUR GAMES:
 } %>
 </div>
 
-New Game:<br>
-Team 1:<br> 
-Team 2:
+<form action="{{ url_for('games') }}" id="new_game" method="POST">
+  New Game:<br>
+  <select name="player1" style="display:none;">
+    <option value="{{user.id}}" selected></option>
+  </select>
+
+  Choose a teammate<br>
+  <select name="player3" id="player3" required>
+  </select>
+
+  <div id="player2_div" style="display:none;">
+    Choose first opponent:<br>
+    <select name="player2" id="player2" required>
+    </select>
+  </div>
+
+  <div id="player4_div" style="display:none;">
+    Choose second opponent:<br>
+    <select name="player4" id="player4" required>
+    </select>
+  </div>
+
+  <input type="submit" value="Go!" id="submit" style="display:none;">
+</form>
 </script>
 
 
