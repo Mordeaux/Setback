@@ -163,6 +163,9 @@ def test():
     kait = User(username='kaitlin', password=hashulate('password'))
     josh = User(username='josh', password=hashulate('password'))
     nat = User(username='natalia', password=hashulate('password'))
+    db_session.add(kait)
+    db_session.add(josh)
+    db_session.add(nat)
     db_session.commit()
     return "SUCCESS"
 

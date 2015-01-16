@@ -105,13 +105,9 @@ class GameView(object):
             return True
         hand = filter(None, self.hand)
         trump = self.trick.trump
-        playables = [x for x in hand if x[-1] in [leading_suit, trump]]
-        print hand
-        print playables
-        if not playables:
-            return True
-        elif card in playables:
-            print 'playable'
+        follow = [x for x in hand if x[-1] == leading_suit]
+        playables = follow.extend([x for x in hand if x[-1] == trum])
+        if not follow or card in playables:
             return True
         else:
             return False
