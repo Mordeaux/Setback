@@ -20,7 +20,7 @@ var TopbarView = Backbone.View.extend({
 
   render: function() {
     this.$el.html( this.topbarTpl( this.model.attributes ) );
-    this.$("#games-list").append($('<option>', {value:'dash', id:'g'}).text(''));
+    this.$("#games-list").append($('<option>', {value:'dash', id:'g'}).text('Dash'));
     for (i=1;i<this.model.attributes.games.length+1;i++){
       this.$("#games-list").append($('<option>', {value:i, id:'g'+i}).text(i));
     }
@@ -51,6 +51,9 @@ var DashView = Backbone.View.extend({
 
   render: function () {
     this.$el.html( this.dashTpl( this.model.attributes ) );
+    if (App.interval){
+      clearInterval(App.interval);
+    }
     for(i=0;i<this.model.attributes.games.length;i++){
       this.$('#game_'+this.model.attributes.games[i]).click(function(){
         if (!App.games){
