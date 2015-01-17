@@ -20,7 +20,25 @@ var TopbarView = Backbone.View.extend({
 
   render: function() {
     this.$el.html( this.topbarTpl( this.model.attributes ) );
-    this.$('#games-list').append( this.model.attributes.games);
+    this.$("#games-list").append($('<option>', {value:'dash', id:'g'}).text(''));
+    for (i=1;i<this.model.attributes.games.length+1;i++){
+      this.$("#games-list").append($('<option>', {value:i, id:'g'+i}).text(i));
+    }
+    this.$('#games-list').change(function(){
+        App.game_id = $(this).children('option:selected').val();
+        if (App.game_id == 'dash'){
+          App.dashView.render();
+        }
+        else {
+          if (!App.games){
+            App.games = new GameCollection();
+          }
+          App.games.fetch({success:function(m,r,o){
+            App.current_game = App.games.get(App.game_id);
+            App.gameView = new GameView({'model':App.current_game}).render();
+        }});
+        }
+    });
     return this;
   }
 });
@@ -74,11 +92,11 @@ var DashView = Backbone.View.extend({
       }
       $('select').change(function(){
         $('select option').show();
-        var arr = $.map($('select option:selected'), function(n){
+        var arr = $.map($('form select option:selected'), function(n){
           return n.value;
         });
         console.log(arr);
-        $('select option').filter(function(){
+        $('form select option').filter(function(){
           return $.inArray($(this).val(), arr)>-1;
         })
         .hide();

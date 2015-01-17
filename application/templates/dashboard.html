@@ -17,7 +17,7 @@
 
 {% block closing_scripts %}
 <script type="text/template" id="topbar-template">
-  <div id="username"><%= username %></div> <div id="games-list">Games</div> <div id="newgame">New Game</div> <div id="rules">Rules</div>
+  <div id="username"><%= username %></div> Games:<select id="games-list"></select> <div id="rules">Rules</div>
 </script>
 
 
@@ -112,7 +112,8 @@ THESE ARE YOUR GAMES:
   </div>
   <% if (!bid && turn == player_number) { %>
   <div id="bid">
-    Bid: <div id="bid_2" class="bid">2,</div> 
+    Bid: <div id="bid_0" class="bid">Pass,</div>
+         <div id="bid_2" class="bid">2,</div> 
          <div id="bid_3" class="bid">3,</div> 
          <div id="bid_4" class="bid">4</div>
   </div>

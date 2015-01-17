@@ -1,3 +1,27 @@
+#sidebar {
+  border: gray solid 1px;
+  font-size: 14px;
+  width:25%;
+  text-align:center;
+  position:absolute;
+  right:0px;
+  height:100%;
+}
+#topbar{
+
+}
+
+.bid{
+  display:inline;
+}
+
+.trump{
+  display:inline;
+}
+
 .card{
-    display:inline;
+  display:inline;
+}
+#topbar div{
+  display:inline;
 }
