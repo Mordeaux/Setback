@@ -47,7 +47,7 @@ class User(UserMixin, Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(50), nullable=False)
-    password = Column(String(40), nullable=False)
+    password = Column(String(64), nullable=False)
     games = association_proxy('games_list', 'game')
  
     @staticmethod

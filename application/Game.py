@@ -51,7 +51,7 @@ class Trick(Base):
     game_id = Column(Integer, ForeignKey('games.id'))
     finished = Column(Boolean, default=False)
     turn = Column(Integer)
-    last_mod = Column(Float)
+    last_mod = Column(Integer)
     leading_suit = Column(Enum('h', 'd', 's', 'c'))
     trump = Column(Enum('h', 'd', 's', 'c'))
     #You can't bid 1 in this game, so it is easy to check that everyone has bid
@@ -68,7 +68,7 @@ class Trick(Base):
         game.hands[1] = Hand(*deck[6:12])
         game.hands[2] = Hand(*deck[12:18])
         game.hands[3] = Hand(*deck[18:24])
-        self.last_mod = time()
+        self.last_mod = int(time())
         self.turn = (game.dealer + 1) % 4
 
 class Game(Base):

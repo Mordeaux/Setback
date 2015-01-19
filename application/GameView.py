@@ -110,11 +110,11 @@ class GameView(object):
 
     def changed(self):
         self.trick.turn = (self.trick.turn + 1) % 4
-        self.trick.last_mod = time()
+        self.trick.last_mod = int(time())
 
     def bidding_finished(self):
         self.trick.turn = self.trick.bidder
-        self.trick.last_mod = time()
+        self.trick.last_mod = int(time())
 
     def discard(self):
         number = lambda x,y: x if int(x[:-1]) > int(y[:-1]) else y
@@ -138,7 +138,7 @@ class GameView(object):
             self.next_trick()
         else:
             self.trick.turn = winner
-            self.trick.last_mod = time()
+            self.trick.last_mod = int(time())
             self.trick.leading_suit = None
 
     def next_trick(self):

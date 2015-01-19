@@ -1,3 +1,10 @@
+a {
+  text-decoration:none;
+  color:black;
+}
+#topbar div{
+  display:inline;
+}
 #sidebar {
   border: gray solid 1px;
   font-size: 14px;
@@ -22,6 +29,4 @@
 .card{
   display:inline;
 }
-#topbar div{
-  display:inline;
-}
+
