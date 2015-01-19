@@ -56,15 +56,20 @@ class GameView(object):
         # Also this currently does not check to make sure the player bids
         # at least 2, because empty bids are stored as 1 in the database,
         # so a bid of less than two will automatically be saved as a pass (0).
-        dealer_bid_4 = self.player_number == self.game.dealer and bid == 4
+        player_number = self.player_number
+        dealer = self.game.dealer
+        dealer_bid_4 = player_number == dealer and bid == 4
+        dealer_force_bid = player_number == dealer and max(self.bids) == 1
         if self.is_turn():
             if bid <= max(self.bids) and not dealer_bid_4:
                 bid = 0
-            self.bids[self.player_number] = bid
+            elif dealer_force_bid and bid == 0:
+                bid = 2
+            self.bids[player_number] = bid
             if 1 not in self.bids:
                 self.trick.bid = max(self.bids)
                 if dealer_bid_4:
-                    self.trick.bidder = self.game.dealer
+                    self.trick.bidder = dealer
                 else:
                     self.trick.bidder = list(self.bids).index(max(self.bids))
                 self.bidding_finished()
