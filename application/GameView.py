@@ -62,9 +62,10 @@ class GameView(object):
         dealer_force_bid = player_number == dealer and max(self.bids) == 1
         if self.is_turn():
             if bid <= max(self.bids) and not dealer_bid_4:
-                bid = 0
-            elif dealer_force_bid and bid == 0:
-                bid = 2
+                if dealer_force_bid and bid == 0:
+                    bid = 2
+                else:
+                    bid = 0
             self.bids[player_number] = bid
             if 1 not in self.bids:
                 self.trick.bid = max(self.bids)

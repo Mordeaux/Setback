@@ -130,15 +130,11 @@ THESE ARE YOUR GAMES:
 </div>
 
 <div id="table">
-  <div id="right_card">
-    <%= table[right] %>
+{% for player in ["right", "top", "left"] %}
+  <div id="{{player}}_card">
+    <%= usernames[{{player}}] %>:<br> <%= table[{{player}}] %>
   </div>
-  <div id="top_card">
-    <%= table[top] %>
-  </div>
-  <div id="left_card">
-    <%= table[left] %>
-  </div>
+{% endfor %}
   <div id="bottom_card">
     <%= table[player_number] %>
   </div>

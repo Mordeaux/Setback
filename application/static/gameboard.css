@@ -15,9 +15,32 @@ a {
   height:100%;
 }
 #topbar{
-
 }
-
+#control{
+  position:absolute;
+  bottom:30%;
+  left:25%;
+}
+#right_card{
+  position:absolute;
+  top:45%;
+  left:50%;
+}
+#left_card{
+  position:absolute;
+  top:45%;
+  left:25%;
+}
+#top_card{
+  position:absolute;
+  bottom:60%;
+  left:37%;
+}
+#bottom_card{
+  position:absolute;
+  bottom:40%;
+  left:37%
+}
 .bid{
   display:inline;
 }
