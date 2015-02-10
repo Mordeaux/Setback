@@ -64,12 +64,14 @@ class Trick(Base):
     def __init__(self, game):
         deck = [str(n)+s for s in ['d','h','s','c'] for n in range(2, 15)]
         shuffle(deck)
-        game.hands[0] = Hand(*deck[:6])
-        game.hands[1] = Hand(*deck[6:12])
-        game.hands[2] = Hand(*deck[12:18])
-        game.hands[3] = Hand(*deck[18:24])
+        for i in range(len(game.hands)):
+            game.hands[i] = Hand(*deck[i*6:(i+1)*6])
         self.last_mod = int(time())
         self.turn = (game.dealer + 1) % 4
+        for hand in game.hands:
+            if not filter(None, map(lambda x: int(x[:-1])>=10, hand)):
+                game.deal()
+                break
 
 class Game(Base):
     """This ORM object holds all the information relevant to a particular 
