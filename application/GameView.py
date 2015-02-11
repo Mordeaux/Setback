@@ -157,7 +157,6 @@ class GameView(object):
                 status += self.m_played.format(self.game.players[player_number].username, 
                                                self.game.table[player_number])
         self.game.message = status
-        print status
         self.game.table[0] = None
         self.game.table[1] = None
         self.game.table[2] = None
@@ -211,24 +210,32 @@ class GameView(object):
             score2 += 1
             message += 'Team 2 got game\n'
         message += 'Team 1 game: {}\n'.format(team1_game)
-        message += 'Team 2 game: {}\n'.format(team2_game)
-        self.game.message += message
+        message += 'Team 2 game: {}\n\n'.format(team2_game)
 
         if bidder == 1 and score1 < bid:
             score1 = -bid
-            message += 'Team 1 did not make their {} bid'.format(bid)
+            message += 'Team 1 did not make their {} bid\n\n'.format(bid)
         elif bidder == 2 and score2 < bid:
             score2 = -bid
-            message += 'Team 2 did not make their {} bid'.format(bid)
+            message += 'Team 2 did not make their {} bid\n\n'.format(bid)
         self.game.team1_score += score1
         self.game.team2_score += score2
         
         self.game.dealer = (self.game.dealer + 1) % 4
-        if not self.finished(score1, score2):
+        if not self.finished():
             self.game.deal()
+        else:
+            self.trick.last_mod = int(time())
+            if self.game.team1_score > self.game.team2_score:
+                message += 'Team 1 wins!!!'
+            elif self.game.team2_score > self.game.team1_score:
+                message += 'Team 2 wins!!!'
+        self.game.message += message
 
-    def finished(self, score1, score2):
+    def finished(self):
         play_to = self.game.play_to
+        score1 = self.game.team1_score
+        score2 = self.game.team2_score
         team1 = score1 >= play_to and (score1 - score2) >= 2
         team2 = score2 >= play_to and (score2 - score1) >= 2
         return team1 or team2

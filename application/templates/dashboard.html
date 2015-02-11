@@ -60,9 +60,12 @@ THESE ARE YOUR GAMES:
 <script type="text/template" id="gameboard-template">
 <div id="sidebar">
   Game: #<%= id %><br>
-  Team 1: <%= team1_score %><br>
-  Team 2: <%= team2_score %><br>
+  Team 1: <%= usernames[0]+' '+usernames[2] %><br>
+  Team 2: <%= usernames[1]+' '+usernames[3] %><br>
+  Team 1 score: <%= team1_score %><br>
+  Team 2 score: <%= team2_score %><br>
   <% if (trump) { %>
+  <%= usernames[bidder] %> bid <%= bid %><br>
   Trump: <%= trump %><br>
   <% } %>
   <% if (leading_suit) { %>
@@ -95,7 +98,7 @@ THESE ARE YOUR GAMES:
 
   <div id="turn">
     <% if (turn == player_number){
-         print("It's your turn");
+         print("<h1>It's your turn</h1>");
        }
        else{
          print("It's "+usernames[turn]+"'s turn");
