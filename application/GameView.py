@@ -164,7 +164,7 @@ class GameView(object):
 
     def next_trick(self):
         trump = self.trick.trump
-        bidder = self.trick.bidder
+        bidder = 1 if self.trick.bidder in [0,2] else 2
         bid = max(self.bids)
         score1 = 0
         score2 = 0
@@ -177,17 +177,45 @@ class GameView(object):
         game_count = lambda x: 10 if x[1] == '0' else int(card[1])
         team1_game = sum([game_count(card) for card in team1 if len(card)>2])
         team2_game = sum([game_count(card) for card in team2 if len(card)>2])
-        for point in (high, low, jack):
-            if point in team1:
-               score1 += 1
-            elif point in team2:
-               score2 += 1
+        message = '\nTrick Finished!\n\n'
+        if high in team1:
+            score1 += 1
+            message += 'Team 1 got the high card: {}\n'.format(high)
+        elif high in team2:
+            score2 += 1
+            message += 'Team 2 got the high card: {}\n'.format(high)
+        if low in team1:
+            score1 += 1
+            message += 'Team 1 got the low card: {}\n'.format(low)
+        elif low in team2:
+            score2 += 1
+            message += 'Team 2 got the low card: {}\n'.format(low)
+        if jack in team1:
+            score1 += 1
+            message += 'Team 1 got the jack\n'
+        elif jack in team2:
+            score2 += 1
+            message += 'Team 2 got the jack\n'
         if team1_game > team2_game:
-           score1 += 1
+            score1 += 1
+            message += 'Team 1 got game\n'
         elif team2_game > team1_game:
-           score2 += 1
+            score2 += 1
+            message += 'Team 2 got game\n'
+        message += 'Team 1 game: {}\n'.format(team1_game)
+        message += 'Team 2 game: {}\n'.format(team2_game)
+        print message
+        self.game.message += message
+
+        if bidder == 1 and score1 < bid:
+            score1 = -bid
+            message += 'Team 1 did not make their {} bid'.format(bid)
+        elif bidder == 2 and score2 < bid:
+            score2 = -bid
+            message += 'Team 2 did not make their {} bid'.format(bid)
         self.game.team1_score += score1
         self.game.team2_score += score2
+        
         self.game.dealer = (self.game.dealer + 1) % 4
         if not self.finished(score1, score2):
             self.game.deal()
