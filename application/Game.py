@@ -72,6 +72,8 @@ class Trick(Base):
             if not filter(None, map(lambda x: int(x[:-1])>=10, hand)):
                 game.deal()
                 break
+        for i in range(4):
+            game.bids[i] = 1
 
 class Game(Base):
     """This ORM object holds all the information relevant to a particular 

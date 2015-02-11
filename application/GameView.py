@@ -46,6 +46,14 @@ class GameView(object):
             'bids': list(self.bids),
             'message':self.game.message
         }
+        if not game['bid']:
+            for i in range(4):
+                if self.bids[i] not in [0,1]:
+                    game['table'][i] = 'bid: {}'.format(self.bids[i])
+                elif self.bids[i] == 0:
+                    game['table'][i] = 'Passed'
+                else:
+                    game['table'][i] = ''
         return game
 
     def is_fresh(self, timestamp):
@@ -141,7 +149,7 @@ class GameView(object):
             self.trick.team2.append(table)
         status = ''
         for i in range(4):
-            player_number = (self.trick.turn + i) % 4
+            player_number = (self.trick.turn + i + 1) % 4
             if player_number == winner:
                 status += self.m_won.format(self.game.players[player_number].username, 
                                             self.game.table[player_number])
@@ -204,7 +212,6 @@ class GameView(object):
             message += 'Team 2 got game\n'
         message += 'Team 1 game: {}\n'.format(team1_game)
         message += 'Team 2 game: {}\n'.format(team2_game)
-        print message
         self.game.message += message
 
         if bidder == 1 and score1 < bid:

@@ -130,10 +130,6 @@ THESE ARE YOUR GAMES:
 </div>
 
 <div id="table">
-  <div id="winner">
-  Josh wins
-  </div>
-
 {% for player in ["right", "top", "left"] %}
   <div id="{{player}}_card">
     <%= usernames[{{player}}] %>:<br> <%= table[{{player}}] %>
