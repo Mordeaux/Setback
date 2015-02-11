@@ -89,6 +89,7 @@ class Game(Base):
     bids = association_proxy('players_list', 'bid')
     table = association_proxy('players_list', 'played_card')
     hands = association_proxy('players_list', 'hand')
+    message = Column(String, default='')
 
     @staticmethod
     def get(game_id):

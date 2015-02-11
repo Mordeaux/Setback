@@ -16,6 +16,8 @@ class GameView(object):
         self.bids = game.bids
         self.turn = self.trick.turn
         self.f = lambda x: len(filter(None, x))
+        self.m_played = '{} played {}\n'
+        self.m_won = '{} won with {}\n'
 
     def view(self):
         """Returns a dictionary that can be jsonified and sent to the client
@@ -42,7 +44,7 @@ class GameView(object):
             'bid': None if 1 in self.game.bids else max(self.game.bids),
             'bidder': self.trick.bidder,
             'bids': list(self.bids),
-            'message':None
+            'message':self.game.message
         }
         return game
 
@@ -61,6 +63,7 @@ class GameView(object):
         dealer_bid_4 = player_number == dealer and bid == 4
         dealer_force_bid = player_number == dealer and max(self.bids) == 1
         if self.is_turn():
+            self.game.message = ''
             if bid <= max(self.bids) and not dealer_bid_4:
                 if dealer_force_bid and bid == 0:
                     bid = 2
@@ -88,6 +91,7 @@ class GameView(object):
         """Takes a card and plays it."""
         if self.is_playable(card) and self.is_turn():
             self.game.table[self.player_number] = self.hand.pop(card)
+            self.game.message = ''
             if self.f(self.game.table) == 4:
                 self.discard()
             else:
@@ -135,6 +139,17 @@ class GameView(object):
             self.trick.team1.append(table)
         else:
             self.trick.team2.append(table)
+        status = ''
+        for i in range(4):
+            player_number = (self.trick.turn + i) % 4
+            if player_number == winner:
+                status += self.m_won.format(self.game.players[player_number].username, 
+                                            self.game.table[player_number])
+            else:
+                status += self.m_played.format(self.game.players[player_number].username, 
+                                               self.game.table[player_number])
+        self.game.message = status
+        print status
         self.game.table[0] = None
         self.game.table[1] = None
         self.game.table[2] = None

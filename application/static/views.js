@@ -128,6 +128,9 @@ var GameView = Backbone.View.extend({
     this.$el.html( this.gameboardTpl( this.model.attributes ) );
     var turn = this.model.attributes.turn;
     var player_number = this.model.attributes.player_number;
+    if (this.model.attributes.message != ''){
+        alert(this.model.attributes.message);
+    }
     if (turn == player_number && App.current_game.get('bid') && !App.current_game.get('trump')){
       this.$('.trump').each(function(i, obj){
         $(obj).click(function(){
