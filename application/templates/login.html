@@ -1,16 +1,26 @@
 ﻿{% extends 'template.html' %}
 
-{% block head %}{% endblock %}
+{% block head %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">{% endblock %}
 
 {% block body %}
-{% from "_formhelpers.html" import render_field %}
-<form method="post" action="/login">
-  <dl>
-    {{ render_field(form.username) }}
-    {{ render_field(form.password) }}
-  </dl>
-  <p><input type="submit" value="Login/Sign Up"></p>
+<div id="topbar">
+  <div id="topbar-logo">SETBACK</div>
+</div>
 
-  <a href="http://blog.michael.mordowanec.com/introducing-setback/">How to play Setback</a>
-</form>
+{% from "_formhelpers.html" import render_field %}
+<div id="content">
+  <div id="login_form">
+    <div id="blue">
+      <form method="post" action="/login">
+        <dl>
+          {{ render_field(form.username) }}
+          {{ render_field(form.password) }}
+        </dl>
+        <p><input type="submit" value="Login/Sign Up"></p>
+
+        <a href="http://blog.michael.mordowanec.com/introducing-setback/">How to play Setback</a>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

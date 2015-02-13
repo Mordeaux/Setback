@@ -226,6 +226,7 @@ class GameView(object):
             self.game.deal()
         else:
             self.trick.last_mod = int(time())
+            self.game.finished = True
             if self.game.team1_score > self.game.team2_score:
                 message += 'Team 1 wins!!!'
             elif self.game.team2_score > self.game.team1_score:
