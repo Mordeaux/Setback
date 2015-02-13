@@ -107,3 +107,9 @@ class Game(Base):
         # reorder these so teams are correct in __repr__
         info = (info[0], info[2], info[1], info[3], info[4])
         return '<%s + %s vs %s + %s, id:%r>' % info
+
+    def __str__(self):
+        info = [player.username for player in self.players]
+        info = (info[0], info[2], info[1], info[3], 
+                self.team1_score, self.team2_score)
+        return '%s and %s versus %s and %s:<br>Score %d:%d' % info

@@ -48,7 +48,7 @@ a {
   font-family:'Merriweather', sans-serif;
   text-align:center;
   color:#2379d5;
-    text-shadow:2px 2px 0 #fad959;
+  text-shadow:2px 2px 0 #fad959;
 }
 
 @media screen and (min-width:1024px){

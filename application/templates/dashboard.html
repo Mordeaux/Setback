@@ -11,22 +11,23 @@
 {% endblock %}
 
 {% block body %}
-<div id="topbar" style="border:1px black solid"></div>
+<div id="topbar"></div>
 <div id="display"></div>
 {% endblock %}
 
 {% block closing_scripts %}
 <script type="text/template" id="topbar-template">
-  <div id="username"><%= username %></div> Games:<select id="games-list"></select> 
-  <div id="rules"><a href="http://blog.michael.mordowanec.com/introducing-setback/">Rules</a></div>
+  <div id="username"><%= username %></div> 
+  Nav:<select id="games-list"></select> 
+  <div id="rules"><a href="http://blog.michael.mordowanec.com/introducing-setback/" target="_blank">Rules</a></div>
 </script>
 
 
 <script type="text/template" id="dash-template">
 <div id="current-games">
-THESE ARE YOUR GAMES:
+Your games:
 <% for(i=0;i<games.length;i++) {
-  print('<div id="game_'+games[i]+'">'+games[i]+'</div>');
+  print('<div id="game_'+games[i]+'" class="game">'+games[i]+': '+players[games[i]]+'</div>');
 } %>
 </div>
 

@@ -106,8 +106,10 @@ class User(UserMixin, Base):
         response = {
             'id': self.id,
             'username': self.username,
-            'games': [game.id for game in self.games]
+            'games': [game.id for game in self.games],
+            'players': {str(game.id):str(game) for game in self.games}
         }
+        print response['players']
         return response
 
     def current_games(self):

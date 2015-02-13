@@ -1,20 +1,48 @@
+@import url(http://fonts.googleapis.com/css?family=Merriweather);
+body{
+  background-color:#27ae60;
+}
 a {
   text-decoration:none;
-  color:black;
+  color:#2379d5;
 }
 #topbar div{
   display:inline;
 }
+#topbar{
+  color:#2379d5;
+  font-size:3em;
+  font-family:'Merriweather', sans-serif;
+  text-shadow:2px 2px 0 #2ecc71;
+}
+#username{
+  text-shadow:2px 2px 0 #fad959;
+  margin-right:30%;
+  font-size:1.2em;
+}
+#games-list{
+  font-size:0.5em;
+}
+.game{
+  padding-top:5%;
+  padding-bottom:5%;
+  margin-top:2%;
+  font-size:.9em;
+  text-align:center;
+  background-color:#fad959;
+  border:solid 5px #2379d5;
+  border-radius:30px;
+}
+#display{
+  background-color:#2ecc71;
+  font-size:3em;
+}
 #sidebar {
-  border: gray solid 1px;
-  font-size: 14px;
   width:25%;
   text-align:center;
   position:absolute;
   right:0px;
   height:100%;
-}
-#topbar{
 }
 #control{
   position:absolute;
