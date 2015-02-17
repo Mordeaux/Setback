@@ -62,7 +62,8 @@ var DashView = Backbone.View.extend({
         App.game_id = parseInt(this.id.slice(5));
         App.games.fetch({success:function(m,r,o){
           App.current_game = App.games.get(App.game_id);
-          App.gameView = new GameView({'model':App.current_game}).render();
+          App.gameView = new GameView({'model':App.current_game})
+          App.gameView.render();
           App.current_game.on({"change": function(){App.gameView.render();}});
         }});
       });
@@ -123,11 +124,24 @@ var DashView = Backbone.View.extend({
 var GameView = Backbone.View.extend({
   el: '#display',
   gameboardTpl: _.template( $('#gameboard-template').html()),
+  cardTpl: _.template( $('#card-template').html()),
 
   render: function() {
     this.$el.html( this.gameboardTpl( this.model.attributes ) );
     var turn = this.model.attributes.turn;
     var player_number = this.model.attributes.player_number;
+    this.$('.cards').each(function(i, obj){
+      var text = $(this).html();
+      console.log(text);
+      if (text.length > 1 && text.length < 4){
+        console.log(text);
+        var suit = text.slice(-1);
+        if (suit == 'h' || suit == 'd'){
+          $(this).css({'color':'red'});
+        }
+        $(obj).html(App.gameView.cardTpl({'card':$(this).html()}));
+      }
+    });
     if (this.model.attributes.message != ''){
         alert(this.model.attributes.message);
     }

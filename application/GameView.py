@@ -97,7 +97,7 @@ class GameView(object):
 
     def play_card(self, card):
         """Takes a card and plays it."""
-        if self.is_playable(card) and self.is_turn():
+        if self.is_turn() and self.is_playable(card):
             self.game.table[self.player_number] = self.hand.pop(card)
             self.game.message = ''
             if self.f(self.game.table) == 4:
@@ -240,7 +240,3 @@ class GameView(object):
         team1 = score1 >= play_to and (score1 - score2) >= 2
         team2 = score2 >= play_to and (score2 - score1) >= 2
         return team1 or team2
-        
-
-        
-

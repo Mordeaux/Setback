@@ -156,18 +156,5 @@ def setup():
         init_db()
 
 
-@app.route('/test')
-@login_required
-def test():
-    mike = User.get(1)
-    kait = User(username='kaitlin', password=hashulate('password'))
-    josh = User(username='josh', password=hashulate('password'))
-    nat = User(username='natalia', password=hashulate('password'))
-    db_session.add(kait)
-    db_session.add(josh)
-    db_session.add(nat)
-    db_session.commit()
-    return "SUCCESS"
-
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
