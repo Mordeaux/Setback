@@ -49,6 +49,6 @@ application/users/
 application/static/cards/
 application/usertable.json
 applicattion
-db
+db/data
 venv
 .next

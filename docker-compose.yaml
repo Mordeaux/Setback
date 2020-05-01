@@ -34,9 +34,11 @@ services:
       context: ./backend
       target: development
     environment:
-      DEVELOPMENT_DB_HOST: db
-      FLASK_APP: run.py
-      FLASK_DEBUG: "1"
+      MYSQL_DATABASE: seback_db
+      MYSQL_USER: setback
+      MYSQL_PASSWORD: pass
+      MYSQL_HOST: db
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
     entrypoint:
       - poetry
       - run
@@ -64,7 +66,8 @@ services:
     networks:
       - db-net
     volumes:
-      - ./db:/var/lib/mysql
+      - ./db/data:/var/lib/mysql
+      - ./db/conf.d:/etc/mysql/conf.d
 networks:
   nginx-net:
     driver: bridge
