@@ -2,6 +2,10 @@
 .playingCard {
   height: 12rem;
   width: 8rem;
+
+  & > div {
+    width: 1rem;
+  }
 }
 
 .red {
