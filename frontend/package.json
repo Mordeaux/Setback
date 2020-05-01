@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.4.1",
+    "lodash": "^4.17.15",
     "next": "^9.3.6",
     "react": "16.13.1",
     "react-dom": "16.13.1",
