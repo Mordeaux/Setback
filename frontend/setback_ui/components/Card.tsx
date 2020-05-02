@@ -1,4 +1,6 @@
 import some from 'lodash/some'
+import times from 'lodash/times'
+import isNil from 'lodash/isNil'
 import styles from './Card.module.scss'
 
 export enum CardSuit {
@@ -24,8 +26,6 @@ export enum CardRank {
   Ace,
 }
 
-const redSuits = [CardSuit.Hearts, CardSuit.Diamonds]
-
 const Card: React.FunctionComponent<{
   suit: CardSuit,
   rank: CardRank,
@@ -49,12 +49,19 @@ const Card: React.FunctionComponent<{
       }
     }
   }
+  const redSuits = [CardSuit.Hearts, CardSuit.Diamonds]
+  const cardBackStyle = isNil(suit) ? styles.cardBackStyle : ''
   const colorClass = some(redSuits, s => s === suit) ? styles.red : styles.black
 
   return (
-    <div className={`card ${styles.playingCard}`}>
-      <div className={styles.rank}>{displayRank(rank)}</div>
-      <div className={colorClass}>{suit}</div>
+    <div className={`card ${styles.playingCard} ${cardBackStyle}`}>
+      <div>
+        {times(2, (index) =>
+          <div className={styles.cardHalf} key={`cardHalf${index}`}>
+            <div className={colorClass}>{displayRank(rank)} {suit}</div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

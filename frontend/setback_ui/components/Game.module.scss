@@ -1,0 +1,16 @@
+
+.gameContainer {
+  width: 100%;
+  height: 100%;
+  background-color: green;
+  position: fixed;
+
+  @for $i from 1 through 4 {
+    & > div:nth-child(#{$i}) {
+      position: absolute;
+      height: 50%;
+      transform-origin: bottom center;
+      transform: rotate(($i - 1) * 90deg);
+    }
+  }
+}

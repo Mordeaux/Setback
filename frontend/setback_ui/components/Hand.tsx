@@ -1,11 +1,7 @@
 import map from 'lodash/map'
 import Card, { CardRank, CardSuit } from './Card'
+import { CardType } from '../types'
 import styles from './Hand.module.scss'
-
-export type CardType = {
-  suit: CardSuit,
-  rank: CardRank,
-}
 
 const Hand: React.FunctionComponent<{
   cards: CardType[],
@@ -17,10 +13,9 @@ const Hand: React.FunctionComponent<{
       <Card
         suit={suit}
         rank={rank}
-        key={rank + suit + index}
+        key={`card${index}`}
       />
     )}
   </div>
-
 
 export default Hand
