@@ -11,6 +11,7 @@ RUN \
     python3-dev \
     libpcre3 \
     libpcre3-dev \
+    default-mysql-client \
     python-mysqldb \
     gcc && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
