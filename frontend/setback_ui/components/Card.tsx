@@ -4,10 +4,10 @@ import isNil from 'lodash/isNil'
 import styles from './Card.module.scss'
 
 export enum CardSuit {
-  Hearts = '♥️',
-  Diamonds = '♦️',
-  Spades = '♠️',
-  Clubs = '♣️',
+  Hearts = 0,
+  Diamonds = 1,
+  Clubs = 2,
+  Spades = 3,
 }
 
 export enum CardRank {
@@ -49,6 +49,20 @@ const Card: React.FunctionComponent<{
       }
     }
   }
+  const displaySuit = suit => {
+    switch (suit) {
+      case CardSuit.Hearts:
+        return '♥️'
+      case CardSuit.Diamonds:
+        return '♦️'
+      case CardSuit.Clubs:
+        return '♣️'
+      case CardSuit.Spades:
+        return '♠️'
+      default:
+        return ''
+    }
+  }
   const redSuits = [CardSuit.Hearts, CardSuit.Diamonds]
   const cardBackStyle = isNil(suit) ? styles.cardBackStyle : ''
   const colorClass = some(redSuits, s => s === suit) ? styles.red : styles.black
@@ -58,7 +72,7 @@ const Card: React.FunctionComponent<{
       <div>
         {times(2, (index) =>
           <div className={styles.cardHalf} key={`cardHalf${index}`}>
-            <div className={colorClass}>{displayRank(rank)} {suit}</div>
+            <div className={colorClass}>{displayRank(rank)} {displaySuit(suit)}</div>
           </div>
         )}
       </div>

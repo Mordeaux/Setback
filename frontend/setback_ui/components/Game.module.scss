@@ -2,8 +2,8 @@
 .gameContainer {
   width: 100%;
   height: 100%;
-  background-color: green;
   position: fixed;
+  transform: rotate(90deg);
 
   @for $i from 1 through 4 {
     & > div:nth-child(#{$i}) {

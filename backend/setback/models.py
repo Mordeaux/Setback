@@ -147,12 +147,13 @@ class Game(models.Model):
             self.deck.remove(*hand)
 
     def player_view(self, player):
-        hands = {}
+        hands = []
         for mpg in self.matchplayergame_set.all():
-            hands[mpg.player.display_name] = []
+            cards = []
+            hand = { 'player': mpg.player.display_name, 'cards': cards }
             for card in mpg.hand.all():
                 if mpg.player == player:
-                    hands[mpg.player.display_name].append(
+                    cards.append(
                         {
                             'id': card.id,
                             'rank': card.rank,
@@ -160,5 +161,6 @@ class Game(models.Model):
                         }
                     )
                 else:
-                    hands[mpg.player.display_name].append({})
+                    cards.append({})
+            hands.append(hand)
         return hands
